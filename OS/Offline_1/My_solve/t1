@@ -1,5 +1,0 @@
-t=4
-s=x.y.z.txt
-s1=`echo $s | rev`
-s1=${s1/./.$t}
-echo $s1 | rev

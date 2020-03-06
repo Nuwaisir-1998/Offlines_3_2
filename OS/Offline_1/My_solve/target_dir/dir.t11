@@ -1,4 +1,4 @@
-if [ -f $1 ]; then
+if [ -f $1_1 1 ]; then
 echo readable
 else echo not readable
 fi
