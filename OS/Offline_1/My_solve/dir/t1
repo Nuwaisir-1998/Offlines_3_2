@@ -1,0 +1,5 @@
+if [ -f $1 ]; then
+echo readable
+else echo not readable
+fi
+u

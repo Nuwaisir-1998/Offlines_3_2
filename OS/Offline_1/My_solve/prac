@@ -1,0 +1,59 @@
+
+first="begin"
+second="4"
+third="u"
+file_name=""
+
+
+main_dir=`realpath $working_dir/..`
+rm -r $main_dir/target_dir
+mkdir target_dir
+name=""
+flag=1
+f(){
+	cd $1
+	if [ $flag = 1 ];then
+		name=`pwd`.
+		$flag=0
+	else name=$name`pwd`.
+	fi
+	
+	#echo at dir $1
+	list=`ls` 
+	for ff in $list
+	do
+		#echo $ff
+		if [ -d $ff ]; then
+			f $ff
+		elif [ -f $ff ]; then
+			#str=`head -n 1 $ff | grep -ni "f1"`
+			#echo $str
+			#echo file paisi $ff name er
+			str=`file $ff | grep -i "ascii"`
+			str2=`file $ff | grep -i "unicode"`
+			
+			if [ -z "$str" ] && [ -z "$str2" ]; then
+				echo str not readable						
+			elif [ $first = "begin" ];then
+				command=`head -n $second $ff | grep -n $third`
+#				if [ ! -z "$command" ]; then
+#					echo $ff contains $third
+#				else echo $ff does not contains $third
+#				fi
+			elif [ $first = "end" ];then
+				command=`tail -n $second $ff | grep -n $third`
+				
+			fi
+			
+			if [ ! -z "$command" ]; then
+				echo $ff contains $third
+				cp $ff $target_dir/$name
+			else echo $ff does not contains $third
+			fi
+			
+		fi
+	done	
+	cd ..	
+}
+
+f $1
