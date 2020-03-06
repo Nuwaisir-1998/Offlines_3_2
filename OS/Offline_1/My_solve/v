@@ -8,21 +8,34 @@ if [ $# = 0 ]; then
 	exit
 elif [ -d $1 ]; then
 	#echo r
+	working_dir_name=$1
 	working_dir=`realpath $1`
 	rm -r target_dir
 	mkdir target_dir
 	target_dir=`realpath target_dir`
 	if [ -f $2 ]; then
 		input_file=$2
+		first=`head -1 $input_file`
+		second=`head -2 $input_file | tail -1`
+		third=`tail -1 $input_file`
 	else
 		echo give proper input file
 		exit
 	fi
 elif [ -f $1 ]; then
+
 	input_file=$1
 	rm -r ../target_dir
 	mkdir ../target_dir
 	target_dir=`realpath target_dir`
+	temp=`realpath .`
+	working_dir_name=`basename $temp`
+	cd ..
+	
+	first=`head -1 $working_dir_name/$input_file`
+	second=`head -2 $working_dir_name/$input_file | tail -1`
+	third=`tail -1 $working_dir_name/$input_file`
+	
 else
 	echo give proper input file
 fi
@@ -31,14 +44,14 @@ fi
 #rm -r $main_dir/target_dir
 #mkdir target_dir
 
-
+#echo wd : $working_dir_name
 
 
 #echo $working_dir $input_file
 
-first=`head -1 $input_file`
-second=`head -2 $input_file | tail -1`
-third=`tail -1 $input_file`
+#first=`head -1 $working_dir_name/$input_file`
+#second=`head -2 $working_dir_name/$input_file | tail -1`
+#third=`tail -1 $working_dir_name/$input_file`
 
 #g=`grep -ni u $input_file`
 #echo $g
@@ -58,11 +71,11 @@ name=""
 flag="1"
 f(){
 	cd $1
-	if [ $flag = "1" ];then
-		name=$1\.
-		flag="0"
-	else name=$name$1\.
-	fi
+#	if [ $flag = "1" ];then
+#		name=$1\.
+#		flag="0"
+#	else name=$name$1\.
+#	fi
 	
 	#echo at dir $1
 	list=`ls` 
@@ -79,7 +92,7 @@ f(){
 			str2=`file $ff | grep -i "unicode"`
 			command=""
 			if [ -z "$str" ] && [ -z "$str2" ]; then
-				echo $ff not readable						
+				status=`echo $ff not readable`
 			elif [ $first = "begin" ];then
 				command=`head -n $second $ff | grep -n $third`
 #				if [ ! -z "$command" ]; then
@@ -99,16 +112,23 @@ f(){
 #				echo num : $num line.
 				ff1=""
 				if [ ! -z "$dot" ]; then
-					ff1=$($ff/"."/".$num")
+					#ff1=$($ff/"."/".$num")
+					ff1=`echo $ff | rev | sed "s|\.|\.$num|" | rev`
 				else ff1=$ff$num
 				fi
-				echo $ff contains $third
+#				echo $ff contains $third
+#				echo new name : $ff1
 #				echo "com : $command"
 #				echo $target_dir/$name$ff
-				echo from : $ff
-				echo to : "$target_dir/$name$ff1"
-				sudo cp -a $ff "$target_dir/$name$ff1"
-			else echo $ff does not contains $third
+				#echo w : $working_dir
+				rep=$working_dir
+				name=`realpath . | sed "s|^.*$working_dir_name|$working_dir_name|"`
+				name=`echo $name | sed "s|/|\.|g"`
+#				echo nam : $name
+#				echo from : $ff
+#				echo to : "$target_dir/$name.$ff1"
+				sudo cp -a $ff "$target_dir/$name.$ff1"
+			else status2=`echo $ff does not contains $third`
 			fi
 			
 		fi
@@ -116,6 +136,6 @@ f(){
 	cd ..	
 }
 
-f $1
+f $working_dir_name
 
 
