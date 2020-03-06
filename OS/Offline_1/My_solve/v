@@ -1,19 +1,20 @@
 #!/bin/bash
 current_dir=`realpath .`
 working_dir=$current_dir
+file_no=`expr 0`
 #working_dir=$current_dir
 #echo $working_dir
 if [ $# = 0 ]; then
 	echo give proper file name
 	exit
-elif [ -d $1 ]; then
+elif [ -d "$1" ]; then
 	#echo r
 	working_dir_name=$1
 	working_dir=`realpath $1`
 	rm -r target_dir
 	mkdir target_dir
 	target_dir=`realpath target_dir`
-	if [ -f $2 ]; then
+	if [ -f "$2" ]; then
 		input_file=$2
 		first=`head -1 $input_file`
 		second=`head -2 $input_file | tail -1`
@@ -22,7 +23,7 @@ elif [ -d $1 ]; then
 		echo give proper input file
 		exit
 	fi
-elif [ -f $1 ]; then
+elif [ -f "$1" ]; then
 
 	input_file=$1
 	rm -r ../target_dir
@@ -40,7 +41,9 @@ else
 	echo give proper input file
 fi
 
-
+rm $target_dir/../out.csv
+touch $target_dir/../out.csv
+echo File path,Line number,File containing the searched text > out.csv
 file_name=""
 
 
@@ -50,21 +53,23 @@ main_dir=`realpath $working_dir/..`
 name=""
 flag="1"
 f(){
-	cd $1
+	cd "$1"
 #	if [ $flag = "1" ];then
 #		name=$1\.
 #		flag="0"
 #	else name=$name$1\.
 #	fi
 	
-	#echo at dir $1
+#	echo at dir $1
 	list=`ls` 
-	for ff in $list
+	for ff in *
 	do
-		#echo $ff
-		if [ -d $ff ]; then
-			f $ff
-		elif [ -f $ff ]; then
+		
+		if [ -d "$ff" ]; then
+#			echo at : $ff
+			f "$ff"
+		elif [ -f "$ff" ]; then
+#			echo at file : $ff
 			#str=`head -n 1 $ff | grep -ni "f1"`
 			#echo $str
 			#echo file paisi $ff name er
@@ -73,6 +78,7 @@ f(){
 			command=""
 			if [ -z "$str" ] && [ -z "$str2" ]; then
 				status=`echo $ff not readable`
+#				echo $status
 			elif [ $first = "begin" ];then
 				command=`head -n $second $ff | grep -ni $third`
 #				if [ ! -z "$command" ]; then
@@ -86,14 +92,18 @@ f(){
 			if [ ! -z "$command" ]; then
 				dot=`echo $ff | grep "\."`
 				if [ $first = "end" ]; then
-					num=`grep -n . "$ff" | grep "$third" | tail -1 | cut -f 1 -d :`
-				else num=`grep -n . "$ff" | grep "$third" | head -1 | cut -f 1 -d :`
+					num=`grep -n . "$ff" | grep -i "$third" | tail -1 | cut -f 1 -d :`
+					the_line=`grep . "$ff" | grep -i "$third" | tail -1`
+				else num=`grep -n . "$ff" | grep -i "$third" | head -1 | cut -f 1 -d :`
+					the_line=`grep . "$ff" | grep -i "$third" | head -1`
 				fi
+				
 #				echo num : $num line.
 				ff1=""
 				if [ ! -z "$dot" ]; then
 					#ff1=$($ff/"."/".$num")
-					ff1=`echo $ff | rev | sed "s|\.|\.$num|" | rev`
+					num2=`echo $num | rev`
+					ff1=`echo $ff | rev | sed "s|\.|\.$num2|" | rev`
 				else ff1=$ff$num
 				fi
 #				echo $ff contains $third
@@ -108,6 +118,9 @@ f(){
 #				echo from : $ff
 #				echo to : "$target_dir/$name.$ff1"
 				sudo cp -a $ff "$target_dir/$name.$ff1"
+				file_no=`expr $file_no + 1`
+#				echo file_no : $file_no
+				echo $name/$ff,$num,$the_line >> $target_dir/../out.csv
 			else status2=`echo $ff does not contains $third`
 			fi
 			
@@ -117,5 +130,6 @@ f(){
 }
 
 f $working_dir_name
-
+echo total files matched : $file_no 
+#echo $file_no, ,  >> $target_dir/../out.csv
 
