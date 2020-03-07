@@ -1,0 +1,37 @@
+Shell_Script_Offline/debug.log,1,[0227/221818.576:ERROR:crash_report_database_win.cc(469)] failed to stat report
+Shell_Script_Offline/input.txt,3,t
+Shell_Script_Offline/out,1,give proper input file
+Shell_Script_Offline/out.csv,1,File path,Line number,File containing the searched text
+Shell_Script_Offline/output.csv,1,File Path,Line Number,Line Containing Searched String
+Shell_Script_Offline.output_dir/working_dir.Awesome.no_no_7.txt,1,I would love to try or hear the sample audio your app can produce. I do not want to purchase, because I've purchased so many apps that say they do something and do not deliver.
+Shell_Script_Offline.output_dir/working_dir.dd_19.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
+Shell_Script_Offline.output_dir/working_dir.Hello.My_10.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
+Shell_Script_Offline.output_dir/working_dir.Hello.World.this_15.txt,2,Write Interview Experience
+Shell_Script_Offline.output_dir/working_dir.less_1,1,CONTRIBUTE
+Shell_Script_Offline.output_dir/working_dir.Practice_13.cpp,1,#include <iostream>
+Shell_Script_Offline/test.csv,1,file path,line number,file containing the searched text
+Shell_Script_Offline/v,2,current_dir=`realpath .`
+Shell_Script_Offline.working_dir.Awesome/cool.txt,1,Skip to main content
+Shell_Script_Offline.working_dir.Awesome/hot.txt,1,We use cookies to ensure you have the best browsing experience on our website.
+Shell_Script_Offline.working_dir.Awesome/lab.txt,1,We use cookies to ensure you have the best browsing experience on our website.
+Shell_Script_Offline.working_dir.Awesome/no_no.txt,1,I would love to try or hear the sample audio your app can produce. I do not want to purchase, because I've purchased so many apps that say they do something and do not deliver.
+Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/dumb.txt,1,We use cookies to ensure you have the best browsing experience on our website.
+Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt,1,Dijkstra’s shortest path algorithm | Greedy Algo-7
+Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt,1,Top 10 Algorithms and Data Structures for Competitive Programming
+Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart,1,We use cookies to ensure you have the best browsing experience on our website.
+Shell_Script_Offline.working_dir/dd.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
+Shell_Script_Offline.working_dir/fractals.cpp,1,#include <stdio.h>
+Shell_Script_Offline.working_dir.Hello/My.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
+Shell_Script_Offline.working_dir.Hello/name.txt,1,Dijkstra’s shortest path algorithm | Greedy Algo-7
+Shell_Script_Offline.working_dir.Hello/What.txt,1, Home Jobs Tools Coding Ground Current Affairs UPSC Notes Online Tutors Whiteboard Net Meeting Tutorix
+Shell_Script_Offline.working_dir.Hello.World/beautiful.txt,1,Skip to main content
+Shell_Script_Offline.working_dir.Hello.World/this.txt,2,Write Interview Experience
+Shell_Script_Offline.working_dir.Hello.World/ugly.txt,1,Top 10 Algorithms and Data Structures for Competitive Programming
+Shell_Script_Offline.working_dir/less,1,CONTRIBUTE
+Shell_Script_Offline.working_dir/myoffline.sh,3,if [ $# -ne 1 ]; then
+Shell_Script_Offline.working_dir/Practice.cpp,1,#include <iostream>
+Shell_Script_Offline.working_dir/sh.html,1,<html>
+Shell_Script_Offline.working_dir/space_remove.sh,1,find . -depth -name '* *' \
+Shell_Script_Offline.working_dir/temp,1,if [ -r txt_files.zip ]; then
+Shell_Script_Offline.working_dir/test.c,1,#include <stdio.h>
+Shell_Script_Offline.working_dir/tree.sh,3,#2 params: #1 is the level #2 is the file name
