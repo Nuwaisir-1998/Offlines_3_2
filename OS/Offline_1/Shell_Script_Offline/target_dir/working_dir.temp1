@@ -1,3 +1,0 @@
-if [ -r txt_files.zip ]; then
-echo readable
-fi

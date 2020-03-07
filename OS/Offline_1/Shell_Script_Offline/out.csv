@@ -1,25 +1,30 @@
-File path,Line number,File containing the searched text
-working_dir.Awesome/cool.txt,1,Skip to main content
-working_dir.Awesome/hot.txt,1,We use cookies to ensure you have the best browsing experience on our website.
-working_dir.Awesome/lab.txt,1,We use cookies to ensure you have the best browsing experience on our website.
-working_dir.Awesome/no_no.txt,1,I would love to try or hear the sample audio your app can produce. I do not want to purchase, because I've purchased so many apps that say they do something and do not deliver.
-working_dir.Awesome.Oh! Boy!!/dumb.txt,1,We use cookies to ensure you have the best browsing experience on our website.
-working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt,1,Dijkstra’s shortest path algorithm | Greedy Algo-7
-working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt,1,Top 10 Algorithms and Data Structures for Competitive Programming
-working_dir.Awesome.Oh! Boy!!/smart,1,We use cookies to ensure you have the best browsing experience on our website.
-working_dir/dd.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
-working_dir/fractals.cpp,1,#include <stdio.h>
-working_dir.Hello/My.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
-working_dir.Hello/name.txt,1,Dijkstra’s shortest path algorithm | Greedy Algo-7
-working_dir.Hello/What.txt,1, Home Jobs Tools Coding Ground Current Affairs UPSC Notes Online Tutors Whiteboard Net Meeting Tutorix
-working_dir.Hello.World/beautiful.txt,1,Skip to main content
-working_dir.Hello.World/this.txt,2,Write Interview Experience
-working_dir.Hello.World/ugly.txt,1,Top 10 Algorithms and Data Structures for Competitive Programming
-working_dir/less,1,CONTRIBUTE
-working_dir/myoffline.sh,3,if [ $# -ne 1 ]; then
-working_dir/Practice.cpp,1,#include <iostream>
-working_dir/sh.html,1,<html>
-working_dir/space_remove.sh,1,find . -depth -name '* *' \
-working_dir/temp,1,if [ -r txt_files.zip ]; then
-working_dir/test.c,1,#include <stdio.h>
-working_dir/tree.sh,3,#2 params: #1 is the level #2 is the file name
+File path,Line number,Line containing the searched text
+"working_dir.Awesome/cool.txt","293","This list goes on, there are various areas where software developers are happily using C++ to provide great softwares. I highly recommend you to learn C++ and contribute great softwares to the community."
+"working_dir.Awesome/hot.txt","176","Check out this Author's contributed articles."
+"working_dir.Awesome/hot.txt","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"working_dir.Awesome/hot.txt","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Awesome/hot.txt","252","CONTRIBUTE"
+"working_dir.Awesome/hot.txt","536","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Awesome/hot.txt","592","CONTRIBUTE"
+"working_dir.Awesome/lab.txt","176","Check out this Author's contributed articles."
+"working_dir.Awesome/lab.txt","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"working_dir.Awesome/lab.txt","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Awesome/lab.txt","252","CONTRIBUTE"
+"working_dir.Awesome/no_no.txt","7","CONTRIBUTE"
+"working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt","239","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt","295","CONTRIBUTE"
+"working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","7","CONTRIBUTE"
+"working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","233","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","289","CONTRIBUTE"
+"working_dir.Awesome.Oh! Boy!!/smart","6","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"working_dir.Awesome.Oh! Boy!!/smart","176","Check out this Author's contributed articles."
+"working_dir.Awesome.Oh! Boy!!/smart","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"working_dir.Awesome.Oh! Boy!!/smart","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Awesome.Oh! Boy!!/smart","252","CONTRIBUTE"
+"working_dir.Hello/name.txt","239","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Hello/name.txt","295","CONTRIBUTE"
+"working_dir.Hello/What.txt","142","This list goes on, there are various areas where software developers are happily using C++ to provide great softwares. I highly recommend you to learn C++ and contribute great softwares to the community."
+"working_dir.Hello.World/ugly.txt","228","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"working_dir.Hello.World/ugly.txt","284","CONTRIBUTE"
+"working_dir/Practice.cpp","13","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"working_dir/Practice.cpp","53","	// contribute"

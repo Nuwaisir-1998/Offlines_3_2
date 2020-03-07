@@ -1,37 +1,70 @@
-Shell_Script_Offline/debug.log,1,[0227/221818.576:ERROR:crash_report_database_win.cc(469)] failed to stat report
-Shell_Script_Offline/input.txt,3,t
-Shell_Script_Offline/out,1,give proper input file
-Shell_Script_Offline/out.csv,1,File path,Line number,File containing the searched text
-Shell_Script_Offline/output.csv,1,File Path,Line Number,Line Containing Searched String
-Shell_Script_Offline.output_dir/working_dir.Awesome.no_no_7.txt,1,I would love to try or hear the sample audio your app can produce. I do not want to purchase, because I've purchased so many apps that say they do something and do not deliver.
-Shell_Script_Offline.output_dir/working_dir.dd_19.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
-Shell_Script_Offline.output_dir/working_dir.Hello.My_10.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
-Shell_Script_Offline.output_dir/working_dir.Hello.World.this_15.txt,2,Write Interview Experience
-Shell_Script_Offline.output_dir/working_dir.less_1,1,CONTRIBUTE
-Shell_Script_Offline.output_dir/working_dir.Practice_13.cpp,1,#include <iostream>
-Shell_Script_Offline/test.csv,1,file path,line number,file containing the searched text
-Shell_Script_Offline/v,2,current_dir=`realpath .`
-Shell_Script_Offline.working_dir.Awesome/cool.txt,1,Skip to main content
-Shell_Script_Offline.working_dir.Awesome/hot.txt,1,We use cookies to ensure you have the best browsing experience on our website.
-Shell_Script_Offline.working_dir.Awesome/lab.txt,1,We use cookies to ensure you have the best browsing experience on our website.
-Shell_Script_Offline.working_dir.Awesome/no_no.txt,1,I would love to try or hear the sample audio your app can produce. I do not want to purchase, because I've purchased so many apps that say they do something and do not deliver.
-Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/dumb.txt,1,We use cookies to ensure you have the best browsing experience on our website.
-Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt,1,Dijkstra’s shortest path algorithm | Greedy Algo-7
-Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt,1,Top 10 Algorithms and Data Structures for Competitive Programming
-Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart,1,We use cookies to ensure you have the best browsing experience on our website.
-Shell_Script_Offline.working_dir/dd.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
-Shell_Script_Offline.working_dir/fractals.cpp,1,#include <stdio.h>
-Shell_Script_Offline.working_dir.Hello/My.txt,1,logoDepartment of Computer Science and EngineeringBangladesh University of Engineering and Technology
-Shell_Script_Offline.working_dir.Hello/name.txt,1,Dijkstra’s shortest path algorithm | Greedy Algo-7
-Shell_Script_Offline.working_dir.Hello/What.txt,1, Home Jobs Tools Coding Ground Current Affairs UPSC Notes Online Tutors Whiteboard Net Meeting Tutorix
-Shell_Script_Offline.working_dir.Hello.World/beautiful.txt,1,Skip to main content
-Shell_Script_Offline.working_dir.Hello.World/this.txt,2,Write Interview Experience
-Shell_Script_Offline.working_dir.Hello.World/ugly.txt,1,Top 10 Algorithms and Data Structures for Competitive Programming
-Shell_Script_Offline.working_dir/less,1,CONTRIBUTE
-Shell_Script_Offline.working_dir/myoffline.sh,3,if [ $# -ne 1 ]; then
-Shell_Script_Offline.working_dir/Practice.cpp,1,#include <iostream>
-Shell_Script_Offline.working_dir/sh.html,1,<html>
-Shell_Script_Offline.working_dir/space_remove.sh,1,find . -depth -name '* *' \
-Shell_Script_Offline.working_dir/temp,1,if [ -r txt_files.zip ]; then
-Shell_Script_Offline.working_dir/test.c,1,#include <stdio.h>
-Shell_Script_Offline.working_dir/tree.sh,3,#2 params: #1 is the level #2 is the file name
+File path,Line number,Line containing the searched text
+"Shell_Script_Offline/input.txt","3","contribute"
+"Shell_Script_Offline/out.csv","2",""working_dir.Awesome/no_no.txt","7","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","3",""working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","7","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","4",""working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","233","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content.""
+"Shell_Script_Offline/out.csv","5",""working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","289","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","6",""working_dir.Awesome.Oh! Boy!!/smart","6","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE""
+"Shell_Script_Offline/out.csv","7",""working_dir.Awesome.Oh! Boy!!/smart","176","Check out this Author's contributed articles.""
+"Shell_Script_Offline/out.csv","8",""working_dir.Awesome.Oh! Boy!!/smart","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks.""
+"Shell_Script_Offline/out.csv","9",""working_dir.Awesome.Oh! Boy!!/smart","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content.""
+"Shell_Script_Offline/out.csv","10",""working_dir.Awesome.Oh! Boy!!/smart","252","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","11",""working_dir/dd.txt","19","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE""
+"Shell_Script_Offline/out.csv","12",""working_dir.Hello/My.txt","10","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","13",""working_dir.Hello.World/this.txt","15","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","14",""working_dir/less","1","CONTRIBUTE""
+"Shell_Script_Offline/out.csv","15",""working_dir/Practice.cpp","13","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE""
+"Shell_Script_Offline/out.csv","16",""working_dir/Practice.cpp","53","	// contribute""
+"Shell_Script_Offline/output.csv","2","working_dir/Practice.cpp,13,Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline/output.csv","3","working_dir/Awesome/Oh! Boy!!/Fine/Serum.txt,7,CONTRIBUTE"
+"Shell_Script_Offline.output_dir/working_dir.Awesome.no_no_7.txt","7","CONTRIBUTE"
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.Fine.Serum_7.txt","7","CONTRIBUTE"
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.Fine.Serum_7.txt","233","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.Fine.Serum_7.txt","289","CONTRIBUTE"
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.smart_6","6","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.smart_6","176","Check out this Author's contributed articles."
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.smart_6","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.smart_6","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.output_dir/working_dir.Awesome.Oh! Boy!!.smart_6","252","CONTRIBUTE"
+"Shell_Script_Offline.output_dir/working_dir.Practice_13.cpp","13","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline.output_dir/working_dir.Practice_13.cpp","53","	// contribute"
+"Shell_Script_Offline.target_dir/working_dir.Awesome.no_no7.txt","7","CONTRIBUTE"
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.Fine.Serum7.txt","7","CONTRIBUTE"
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.Fine.Serum7.txt","233","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.Fine.Serum7.txt","289","CONTRIBUTE"
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.smart6","6","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.smart6","176","Check out this Author's contributed articles."
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.smart6","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.smart6","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.target_dir/working_dir.Awesome.Oh! Boy!!.smart6","252","CONTRIBUTE"
+"Shell_Script_Offline.target_dir/working_dir.Practice13.cpp","13","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline.target_dir/working_dir.Practice13.cpp","53","	// contribute"
+"Shell_Script_Offline.working_dir.Awesome/cool.txt","293","This list goes on, there are various areas where software developers are happily using C++ to provide great softwares. I highly recommend you to learn C++ and contribute great softwares to the community."
+"Shell_Script_Offline.working_dir.Awesome/hot.txt","176","Check out this Author's contributed articles."
+"Shell_Script_Offline.working_dir.Awesome/hot.txt","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"Shell_Script_Offline.working_dir.Awesome/hot.txt","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Awesome/hot.txt","252","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome/hot.txt","536","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Awesome/hot.txt","592","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome/lab.txt","176","Check out this Author's contributed articles."
+"Shell_Script_Offline.working_dir.Awesome/lab.txt","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"Shell_Script_Offline.working_dir.Awesome/lab.txt","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Awesome/lab.txt","252","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome/no_no.txt","7","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt","239","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Josh.txt","295","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","7","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","233","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!.Fine/Serum.txt","289","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart","6","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart","176","Check out this Author's contributed articles."
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart","177","If you like GeeksforGeeks and would like to contribute, you can also write an article using contribute.geeksforgeeks.org or mail your article to contribute@geeksforgeeks.org. See your article appearing on the GeeksforGeeks main page and help other Geeks."
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart","196","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Awesome.Oh! Boy!!/smart","252","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Hello/name.txt","239","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Hello/name.txt","295","CONTRIBUTE"
+"Shell_Script_Offline.working_dir.Hello/What.txt","142","This list goes on, there are various areas where software developers are happily using C++ to provide great softwares. I highly recommend you to learn C++ and contribute great softwares to the community."
+"Shell_Script_Offline.working_dir.Hello.World/ugly.txt","228","Please write to us at contribute@geeksforgeeks.org to report any issue with the above content."
+"Shell_Script_Offline.working_dir.Hello.World/ugly.txt","284","CONTRIBUTE"
+"Shell_Script_Offline.working_dir/Practice.cpp","13","Tutorialskeyboard_arrow_down Studentskeyboard_arrow_down Courses ContriButE"
+"Shell_Script_Offline.working_dir/Practice.cpp","53","	// contribute"
