@@ -52,8 +52,8 @@ do
 		
 		to_csv="$to_csv","$sum","$avg","$grade"
 		echo $to_csv >> out.csv
+		rm "$ff"
 	fi
 done
-rm 1*
 
 
