@@ -16,6 +16,10 @@ pari.
 ![title](Images/output.PNG)
 
 ### penalty: 
+
+**You have to calculate penalty for all possible pairs of slots. Not just consecutive
+slots.**
+
       gap    penalty
        1       16
        2       8
@@ -53,8 +57,8 @@ _______________________________________
 
 ### way 2:
       Day/Slot         Exam
-         0          (301, 303)
-         1           [empty]  
+         0            (301)
+         1            (303)    
          2            (302)  
 
 ### penalty: 
@@ -78,7 +82,7 @@ coloring korbo.
     shuru korar agei amra kon order e vertex color korbo, sheta janbo, sheta static 
     thakbe, change hobe na.
  - **DSatur:**  
-    **Saturation of a Vertex:** Highest number of colours in a vertice's neighbourhood.
+    **Saturation of a Vertex:** Number of different colours in a vertice's neighbourhood.
     ![Pseudocode](Images/dsatur_pseudocode.PNG)
     Eta dynamic node ordering kore. Mane holo, color kora shuru korar agei amra 
     full ordering ta jante parbo na, algorithm er majhe decide hobe kontar por 
@@ -105,7 +109,10 @@ improve hoise kina. Hoile to valo, na hoile nai... (Local search korbo arki).
  - **Kempe-chain Interchange:**  
     For better understanding: go to https://core.ac.uk/download/pdf/151210222.pdf and 
     search "kempe".  
-    ekta vertex choose korbo, let u be the name, then oi vertex er neighbour der
+    Eta porle asha kori clear hobe.  
+    ![title](Images/kempe_desc.PNG)
+    ![title](Images/kempe.PNG)
+    <!-- ekta vertex choose korbo, let u be the name, then oi vertex er neighbour der
     moddhe ekta vertex v choose korlam, eta sure je tader color different, as amra
     agei constructive heuristic apply kore solution ber korsi. ebar just u er color
     ar u er neighbour der moddhe jader color v er color er same, swap korbo. 
@@ -114,12 +121,12 @@ improve hoise kina. Hoile to valo, na hoile nai... (Local search korbo arki).
     cholte cholte ek shomoy theme jabe. tahole finally jei solution e ashlam,
     shetao arekta valid solution, ekhon kotha hocche amar penalty ki komlo ki na...
     kempe(u, c[u], j) mane holo u er color c[u] ke er neighbour der ekta color
-    j dara swapping korte thakle, j chain ta pabo, tar length koto hobe.
+    j dara swapping korte thakle, j chain ta pabo, tar length koto hobe. -->
  - **Pair Swap Operator:**  
     Same color er vertex gula k ekta color class hishebe chinta kori. emon 2 ta 
-    color class er color swap kore dibo, jate solution feasible thake. emon 2 ta 
-    color class swap korte parle, len(kempe(u,c[u],c[v])) = len(kempe(v,c[v],c[u])) = 1
-    hobe, which implies that pair swap kore amara solution ta feasible ase, as 
+    different color class er vertex er color swap kore dibo, jate solution feasible thake. emon 2 ta 
+    vertex er color swap korte para mane, len(kempe(u,c[u],c[v])) = len(kempe(v,c[v],c[u])) = 1
+    hobe, which implies that pair swap kore amar solution ta feasible ase, as 
     kempe korle solution feasible thakei and color swapping kora mane 2 ta kempe 
     mara... (uporer link tay giye "Pair-swap Operator" likhe search koro).
 
@@ -131,9 +138,5 @@ analyzed to find the trouble spots, i.e., those elements, that, if improved, are
 likely to improve the objective function score. The results of the analysis are 
 used to generate new priorities that determine the order in which the greedy 
 algorithm constructs the next solution. This Construct/Analyze/Prioritize cycle 
-continues until some limit is reached, or an acceptable solution is found.
-Source: https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume10/joslin99a-html/swo.html
-    
-
-    
-
+continues until some limit is reached, or an acceptable solution is found.  
+**Source:** https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume10/joslin99a-html/swo.html
