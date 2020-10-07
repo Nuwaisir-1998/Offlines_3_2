@@ -7,6 +7,8 @@
 using namespace std;
 using namespace __gnu_pbds;
 using namespace __gnu_cxx;
+
+using namespace std::chrono; 
   
 #define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update> 
 
@@ -54,24 +56,34 @@ class Graph
     // considering 0 indexing
     int V;
     int n_stu;
-    vector<set<int>> adj;
+    vector<unordered_set<int>> adj;
     vector<int> color;
     vector<vector<int>> student_courses;
-    vector<bool> vis;
+    vector<vector<int>> weight;
+    vector<vector<int>> total_weight;
+    unordered_set<int> vis;
     vector<int> saturation;
     vector<bool> mark;
+    set<pii> kempe_edges;
+    double total_penalty;
     Graph(int V){
         init(V);
     }
 
     void init(int n){
+        total_penalty = 0;
         this -> V = n;
         adj.resize(n);
-        vis.resize(n);
+        vis.clear();
+        kempe_edges.clear();
         mark.resize(n);
         color.resize(n);
         saturation.resize(n);
         fill(color.begin(), color.end(), -1);
+        weight.resize(n+1);
+        for(int i=0;i<n+1;i++) weight[i].resize(n+1);
+        total_weight.resize(n+1);
+        for(int i=0;i<n+1;i++) total_weight[i].resize(n+1);
     }
 
     void add_student_with_courses(vector<int> courses){
@@ -85,19 +97,25 @@ class Graph
         }
         adj[u].insert(v);
         adj[v].insert(u);
+        weight[u][v]++;
+        weight[v][u]++;
     }
 
     void print(){
-        cout << "adj:\n";
+        int tot_edges = 0;
+        cout << "Total vertices : " << V << "\n";
+        // cout << "adj:\n";
         int mx = 0;
         for(int i=0;i<V;i++){
-            cout << i << ": ";
-            for(auto ele : adj[i]){
-                cout << ele << " ";
-            }
-            cout << "\n";
+            // cout << i << ": ";
+            tot_edges += adj[i].size();
+            // for(auto ele : adj[i]){
+            //     cout << ele << " ";
+            // }
+            // cout << "\n";
             mx = max(mx, (int)adj[i].size());
         }
+        cout << "Total edges : " << tot_edges << "\n";
         cout << "Max degree: ";
         cout << mx << "\n";
         cout << "student_courses:\n";
@@ -117,6 +135,11 @@ class Graph
                 // cout << ele << " ";
             }
             cout << "\n";
+        }
+        for(int i=0;i<V;i++){
+            for(int j=0;j<V;j++){
+                cout << "(" << i << "," << j << ") : " << weight[i][j] << "\n";
+            }
         }
     }
 
@@ -199,48 +222,85 @@ class Graph
     }
 
     double calculate_total_penalty(){
+        // int n_stu = student_courses.size();
+        // double tot_pen = 0;
+        // for(int i=0;i<n_stu;i++){
+        //     vector<ll> slots;
+        //     for(auto course : student_courses[i]){
+        //         slots.push_back(color[course]);
+        //     }
+        //     sort(all(slots));
+        //     int n_slots = slots.size();
+        //     for(int j=0;j<n_slots;j++){
+        //         for(int k=j+1;k<=min(n_slots-1,j+5);k++){
+        //             tot_pen += penalty(slots[k] - slots[j]);
+        //         }
+        //     }
+        // }
+        // return tot_pen / n_stu;
+        total_penalty = 0;
         int n_stu = student_courses.size();
-        double tot_pen = 0;
-        for(int i=0;i<n_stu;i++){
-            vector<ll> slots;
-            for(auto course : student_courses[i]){
-                slots.push_back(color[course]);
-            }
-            sort(all(slots));
-            for(int j=1;j<slots.size();j++){
-                tot_pen += penalty(slots[j] - slots[j-1]);
+        for(int i=0;i<V;i++){
+            for(auto ele : adj[i]){
+                total_weight[i][ele] = weight[i][ele] * penalty(abs(color[ele] - color[i]));
+                total_penalty += total_weight[i][ele];
             }
         }
-        return tot_pen / n_stu;
+        total_penalty /= 2;
+        return total_penalty / n_stu;
     }
 
     void dfsVis(int s, int c1, int c2){
-        vis[s] = true;
+        // vis[s] = true;
+
+        for(auto ele : adj[s]){
+            kempe_edges.insert({min(s, ele), max(s, ele)});
+        }
+        
+        vis.insert(s);
         mark[s] = true;
         if(color[s] == c1) color[s] = c2;
         else color[s] = c1;
         for(auto ele : adj[s]){
-            if(!vis[ele] and (color[ele] == c1 or color[ele] == c2)){
+            if(vis.find(ele) == vis.end() and (color[ele] == c1 or color[ele] == c2)){
                 dfsVis(ele, c1, c2);
             }
         }
     }
 
     void dfs(int s, int c1, int c2){
-        fill(vis.begin(), vis.end(), false);
-        
+        vis.clear();
+        kempe_edges.clear();
+        // cout << "Age : " << total_penalty << "\n";
+
         dfsVis(s, c1, c2);
+        for(auto ele : kempe_edges){
+            // update total_penalty
+            int u = ele.first;
+            int v = ele.second;
+            // cout << u << ' ' << v << ": ";
+            // cout << penalty(abs(color[u] - color[v])) * weight[u][v] << " + \n";
+            // cout << total_weight[u][v] << " - \n";
+            total_penalty += (penalty(abs(color[u] - color[v])) * weight[u][v] - total_weight[u][v]);
+            total_weight[u][v] = penalty(abs(color[u] - color[v])) * weight[u][v];
+        }
+        // cout << "Pore : " << total_penalty << endl;
     }
 
     void kempe(int u, int v){
         // check if the 2 vertices are adjacent
         if(adj[u].find(v) == adj[u].end()) {
-            cout << "KEMPE input vertices " << u << "," << v << " are not adjacent\n";
+            // cout << "KEMPE input vertices " << u << "," << v << " are not adjacent\n";
+            printf("KEMPE input vertices %d , %d are not adjacent\n", u, v);
+            fflush(stdout);
+            // fflush(stdout);
             return;
         }
 
         dfs(u, color[u], color[v]);
-        cout << "After KEMPE at " << u << "," << v << ": " << calculate_total_penalty() << "\n";
+        // cout << "After KEMPE at " << u << "," << v << ": " << calculate_total_penalty() << "\n";
+        // printf("After KEMPE at %d, %d: %lf\n", u, v, calculate_total_penalty());
+        // fflush(stdout);
 
     }
 
@@ -291,51 +351,30 @@ class Graph
     }
 
     void multi_kempe(){
-        // int mx = 0, idx = 0;
-        // for(int i=0;i<V;i++){
-        //     if(mx < adj[i].size()){
-        //         mx = adj[i].size();
-        //         idx = i;
-        //     }
-        // }
-        // if(adj[idx].size() >= 1){
-        //     vector<int> temp(adj[idx].begin(), adj[idx].end());
-        //     kempe(temp[0], idx);
-        // }
-        // double prev = calculate_total_penalty();
-
-        // for(int i=0;i<student_courses.size();i++){
-        //     if(student_courses[i].size() >= 2){
-        //         int u = student_courses[i][0];
-        //         int v = student_courses[i][1];
-        //         kempe(u, v);
-        //         break;
-        //     }
-        // }
-        double mn = (double)INF;
-        int t = V;
-        while(t--){
+        double cur_pen = calculate_total_penalty();
+        int cnt = 1;
+        int n_stu = student_courses.size();
+        // cout << "n_stu : " << n_stu << endl;
+        while(cnt--){
             for(int i=0;i<V;i++){
-                if(!mark[i]){
-                    bool f = false;
-                    for(auto ele : adj[i]){
-                        if(!mark[ele]){
-                            kempe(i, ele);
-                            double now = calculate_total_penalty();
-                            mn = min(mn, now);
-                            f = true;
-                            break;
-                            
-                        }
-                    }
-                    if(f){
-                        break;
+                for(auto ele : adj[i]){
+                    double pen = total_penalty;
+                    // same color more than once na newa handle korte hobe
+                    kempe(i, ele);
+                    // double pen = calculate_total_penalty();
+                    if(pen <= total_penalty){
+                        kempe(i, ele);
+                        // printf("NKEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
+                        // fflush(stdout);
+                    }else{
+                        cur_pen = pen;
+                        // printf("KEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
+                        // fflush(stdout);
                     }
                 }
             }
         }
-        
-        cout << "min cost : " << mn << "\n";
+        printf("Multi KEMPE ends\n");
     }
 
     void pair_swap(int u, int v){
@@ -474,9 +513,16 @@ void solve(){
     read_crs(g, crs);
     read_stu(g, stu);
     // g.largest_degree_heuristic();
+    auto start = high_resolution_clock::now();
     g.d_satur();
     cout << g.calculate_slots_cnt() << " " << g.calculate_total_penalty() << "\n";
+    // g.kempe(0, 48);
+    // g.kempe(0, 48);
+    // g.kempe(0, 48);
     g.multi_kempe();
+    auto stop = high_resolution_clock::now(); 
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by not input output: " << duration.count() / 1e6 << " seconds" << endl; 
     // g.multi_kempe();
     // g.multi_kempe();
 
@@ -488,7 +534,7 @@ void solve(){
 
 int main()
 {
-    ios::sync_with_stdio(false);
+    // ios::sync_with_stdio(false);
 #ifndef ONLINE_JUDGE
     freopen("in", "r", stdin);
     freopen("out", "w", stdout);
@@ -506,11 +552,14 @@ int main()
     //     cout << line << "\n";
     // }
     // f2.close();
-    
+    auto start = high_resolution_clock::now();
     ll tt = 1;
     // cin >> tt;
     ll cs = 1;
     while (tt--)
         solve();
+    auto stop = high_resolution_clock::now(); 
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() / 1e6 << " seconds" << endl; 
     return 0;
 }
