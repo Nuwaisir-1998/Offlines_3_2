@@ -253,9 +253,9 @@ class Graph
     void dfsVis(int s, int c1, int c2){
         // vis[s] = true;
 
-        for(auto ele : adj[s]){
-            kempe_edges.insert({min(s, ele), max(s, ele)});
-        }
+        // for(auto ele : adj[s]){
+        //     kempe_edges.insert({min(s, ele), max(s, ele)});
+        // }
         
         vis.insert(s);
         mark[s] = true;
@@ -265,30 +265,37 @@ class Graph
             if(vis.find(ele) == vis.end() and (color[ele] == c1 or color[ele] == c2)){
                 dfsVis(ele, c1, c2);
             }
+            cout << s << " " << ele << "\n";
+            cout << penalty(abs(color[ele] - color[s])) * weight[s][ele] << " + \n";
+            cout << total_weight[s][ele] << " - \n";
+            total_penalty += (penalty(abs(color[ele] - color[s])) * weight[s][ele] - total_weight[s][ele]);
+            total_weight[s][ele] = penalty(abs(color[s] - color[ele])) * weight[s][ele];
+            total_weight[ele][s] = penalty(abs(color[s] - color[ele])) * weight[ele][s];
         }
     }
 
     void dfs(int s, int c1, int c2){
         vis.clear();
-        kempe_edges.clear();
+        // kempe_edges.clear();
         // cout << "Age : " << total_penalty << "\n";
 
         dfsVis(s, c1, c2);
-        for(auto ele : kempe_edges){
-            // update total_penalty
-            int u = ele.first;
-            int v = ele.second;
-            // cout << u << ' ' << v << ": ";
-            // cout << penalty(abs(color[u] - color[v])) * weight[u][v] << " + \n";
-            // cout << total_weight[u][v] << " - \n";
-            total_penalty += (penalty(abs(color[u] - color[v])) * weight[u][v] - total_weight[u][v]);
-            total_weight[u][v] = penalty(abs(color[u] - color[v])) * weight[u][v];
-        }
+        // for(auto ele : kempe_edges){
+        //     // update total_penalty
+        //     int u = ele.first;
+        //     int v = ele.second;
+        //     // cout << u << ' ' << v << ": ";
+        //     // cout << penalty(abs(color[u] - color[v])) * weight[u][v] << " + \n";
+        //     // cout << total_weight[u][v] << " - \n";
+        //     total_penalty += (penalty(abs(color[u] - color[v])) * weight[u][v] - total_weight[u][v]);
+        //     total_weight[u][v] = penalty(abs(color[u] - color[v])) * weight[u][v];
+        // }
         // cout << "Pore : " << total_penalty << endl;
     }
 
     void kempe(int u, int v){
         // check if the 2 vertices are adjacent
+        cout << "Kempe at " << u << ", " << v << "\n";
         if(adj[u].find(v) == adj[u].end()) {
             // cout << "KEMPE input vertices " << u << "," << v << " are not adjacent\n";
             printf("KEMPE input vertices %d , %d are not adjacent\n", u, v);
@@ -364,12 +371,12 @@ class Graph
                     // double pen = calculate_total_penalty();
                     if(pen <= total_penalty){
                         kempe(i, ele);
-                        // printf("NKEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
-                        // fflush(stdout);
+                        printf("NKEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
+                        fflush(stdout);
                     }else{
                         cur_pen = pen;
-                        // printf("KEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
-                        // fflush(stdout);
+                        printf("KEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
+                        fflush(stdout);
                     }
                 }
             }
