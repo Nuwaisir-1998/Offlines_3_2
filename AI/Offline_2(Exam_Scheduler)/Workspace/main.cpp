@@ -71,6 +71,7 @@ class Graph
     }
 
     void init(int n){
+        n_stu = 0;
         total_penalty = 0;
         this -> V = n;
         adj.resize(n);
@@ -88,6 +89,7 @@ class Graph
 
     void add_student_with_courses(vector<int> courses){
         student_courses.push_back(courses);
+        n_stu++;
     }
 
     void addEdge(int u, int v){
@@ -428,6 +430,38 @@ class Graph
 
     }
 
+    pii find_min_penalt_kempe(){
+        double mn = INF;
+        int x = -1, y = -1;
+        for(int i=0;i<V;i++){
+            unordered_set<int> ust;
+            for(auto ele : adj[i]){
+                if(ust.find(ele) != ust.end()) continue;
+                ust.insert(ele);
+                kempe(i, ele);
+                cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl; 
+                if(total_penalty < mn){
+                    mn = total_penalty;
+                    x = i;
+                    y = ele;
+                }
+                kempe(i, ele);
+                cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl; 
+            }
+        }
+        return {x, y};
+    }
+
+    void hill_climbing_kempe(){
+        cout << calculate_total_penalty() << " " << n_stu << endl;
+        int cnt = 1;
+        while(cnt--){
+            pii p = find_min_penalt_kempe();
+            kempe(p.first, p.second);
+            cout << "KEMPE at " << p.first << ", " << p.second << ": " << total_penalty / n_stu << endl; 
+        }
+    }
+
     void pair_swap(int u, int v){
         swap(color[u], color[v]);
     }
@@ -567,10 +601,10 @@ void solve(){
     g.largest_degree_heuristic();
     // g.d_satur();
     // cout << g.calculate_slots_cnt() << " " << g.calculate_total_penalty() << "\n";
-    // g.kempe(0, 48);
-    // g.kempe(0, 48);
-    // g.kempe(0, 48);
-    g.multi_kempe();
+    
+    // g.multi_kempe();
+
+    g.hill_climbing_kempe();
     cout << "Slots : " << g.calculate_slots_cnt() << "\nPenalty : " << g.total_penalty / g.student_courses.size() << "\n";
     auto stop = high_resolution_clock::now(); 
     auto duration = duration_cast<microseconds>(stop - start);
