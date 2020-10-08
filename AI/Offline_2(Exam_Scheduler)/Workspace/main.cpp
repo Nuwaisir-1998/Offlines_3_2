@@ -61,9 +61,11 @@ class Graph
     vector<vector<int>> student_courses;
     vector<vector<int>> weight;
     vector<vector<int>> total_weight;
+    vector<vector<int>> kempe_done;
     unordered_set<int> vis;
     vector<int> saturation;
     vector<bool> mark;
+    unordered_set<int> track_subgraphs;
     // set<pii> kempe_edges;
     double total_penalty;
     Graph(int V){
@@ -71,6 +73,7 @@ class Graph
     }
 
     void init(int n){
+        track_subgraphs.clear();
         n_stu = 0;
         total_penalty = 0;
         this -> V = n;
@@ -85,6 +88,8 @@ class Graph
         for(int i=0;i<n+1;i++) weight[i].resize(n+1);
         total_weight.resize(n+1);
         for(int i=0;i<n+1;i++) total_weight[i].resize(n+1);
+        kempe_done.resize(n+1);
+        for(int i=0;i<n+1;i++) kempe_done[i].resize(n+1);
     }
 
     void add_student_with_courses(vector<int> courses){
@@ -258,7 +263,7 @@ class Graph
         // for(auto ele : adj[s]){
         //     kempe_edges.insert({min(s, ele), max(s, ele)});
         // }
-        
+        track_subgraphs.insert(s);
         vis.insert(s);
         mark[s] = true;
         if(color[s] == c1) color[s] = c2;
@@ -295,7 +300,7 @@ class Graph
         // cout << "Pore : " << total_penalty << endl;
     }
 
-    void kempe(int u, int v){
+    void kempe(int u, int v, bool isHillClimbing){
         // check if the 2 vertices are adjacent
         // cout << "Kempe at " << u << ", " << v << "\n";
         if(adj[u].find(v) == adj[u].end()) {
@@ -305,8 +310,23 @@ class Graph
             // fflush(stdout);
             return;
         }
-
+        // unordered_set<int> ust;
+        // track_subgraphs.push_back(ust);
+        track_subgraphs.clear();
         dfs(u, color[u], color[v]);
+
+        if(isHillClimbing){
+            vector<int> v (track_subgraphs.begin(), track_subgraphs.end());
+            for(int i=0;i<v.size();i++){
+                for(int j=i+1;j<v.size();j++){
+                    kempe_done[v[i]][v[j]] = true;
+                    kempe_done[v[j]][v[i]] = true;
+                }
+            }
+        }
+        track_subgraphs.clear();
+
+
         // cout << "After KEMPE at " << u << "," << v << ": " << calculate_total_penalty() << "\n";
         // printf("After KEMPE at %d, %d: %lf\n", u, v, calculate_total_penalty());
         // fflush(stdout);
@@ -370,11 +390,11 @@ class Graph
         //         for(auto ele : adj[i]){
         //             double pen = total_penalty;
         //             // same color more than once na newa handle korte hobe
-        //             if(done.find(ele) != done.end()) {
+        //             if(done.find(color[ele]) != done.end()) {
         //                 // cout << ele << " already visited\n";
         //                 continue;
         //             }
-        //             done.insert(ele);
+        //             done.insert(color[ele]);
         //             kempe(i, ele);
         //             // printf("NKEMPE at %d, %d: %lf\n", i, ele, total_penalty / n_stu);
         //             // fflush(stdout);
@@ -411,11 +431,11 @@ class Graph
             }
             int j = rand() % (int)adj[i].size();
             double pen = total_penalty;
-            kempe(i, adj_vector[i][j]);
+            kempe(i, adj_vector[i][j], 0);
             no_of_kempe++;
             cout << "XKEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
             if(total_penalty >= pen){
-                kempe(i, adj_vector[i][j]);
+                kempe(i, adj_vector[i][j], 0);
                 no_of_kempe++;
                 cout << "NKEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
             }else{
@@ -434,32 +454,65 @@ class Graph
         double mn = INF;
         int x = -1, y = -1;
         for(int i=0;i<V;i++){
-            unordered_set<int> ust;
+            fill(kempe_done[i].begin(), kempe_done[i].end(), false);
+        }
+        int edge_cnt = 0;
+        for(int i=0;i<V;i++){
+            // unordered_set<int> ust;
+            edge_cnt += adj[i].size();
             for(auto ele : adj[i]){
-                if(ust.find(ele) != ust.end()) continue;
-                ust.insert(ele);
-                kempe(i, ele);
-                cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl; 
+                // if(ust.find(color[ele]) != ust.end()) continue;
+                // ust.insert(color[ele]);
+                // bool already_done = false;
+                // for(auto st : track_subgraphs){
+                //     if(st.find(i) != st.end() and st.find(ele) != st.end()) {
+                //         already_done = true;
+                //         break;
+                //     }
+                // }
+                // if(already_done) continue;
+
+                if(kempe_done[i][ele]) continue;
+
+                kempe(i, ele, true);
+                // cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl; 
                 if(total_penalty < mn){
                     mn = total_penalty;
                     x = i;
                     y = ele;
                 }
-                kempe(i, ele);
-                cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl; 
+                kempe(i, ele, true);
+                // cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl;
             }
         }
+        cout << "Edge count : " << edge_cnt << endl;
+        cout << "size of track_subgraphs: " << track_subgraphs.size() << endl;
         return {x, y};
     }
 
     void hill_climbing_kempe(){
         cout << calculate_total_penalty() << " " << n_stu << endl;
-        int cnt = 1;
+        int cnt = 1000;
+        double mn = INF;
+        int kem = 0;
         while(cnt--){
             pii p = find_min_penalt_kempe();
-            kempe(p.first, p.second);
-            cout << "KEMPE at " << p.first << ", " << p.second << ": " << total_penalty / n_stu << endl; 
+            if(p.first == -1) {
+                cout << "Local minima reached\n";
+                break;
+            }
+            kempe(p.first, p.second, false);
+            kem ++;
+            cout << kem << ". MAIN KEMPE at " << p.first << ", " << p.second << ": " << total_penalty / n_stu << endl;
+            if(mn > total_penalty){
+                mn = total_penalty;
+            }else{
+                break;
+            }
+            
         }
+        cout << "MIn : " << mn / n_stu << endl;
+        cout << "Total KEMPE : " << kem << endl;
     }
 
     void pair_swap(int u, int v){
@@ -598,15 +651,15 @@ void solve(){
     read_crs(g, crs);
     read_stu(g, stu);
     auto start = high_resolution_clock::now();
-    g.largest_degree_heuristic();
-    // g.d_satur();
+    // g.largest_degree_heuristic();
+    g.d_satur();
     // cout << g.calculate_slots_cnt() << " " << g.calculate_total_penalty() << "\n";
     
     // g.multi_kempe();
 
     g.hill_climbing_kempe();
-    cout << "Slots : " << g.calculate_slots_cnt() << "\nPenalty : " << g.total_penalty / g.student_courses.size() << "\n";
-    auto stop = high_resolution_clock::now(); 
+    cout << "Slots : " << g.calculate_slots_cnt() << "\nPenalty : " << g.calculate_total_penalty() << "\n";
+    auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by not input output: " << duration.count() / 1e6 << " seconds" << endl; 
     // g.multi_kempe();
