@@ -50,12 +50,19 @@ struct custom_hash {
 unordered_map<ll, ll, custom_hash> safe_map;
 gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 
+ofstream ofs("out.csv");
+
 class Graph
 {
     public:
     // considering 0 indexing
     int V;
     int n_stu;
+    int total_kempe_count;
+    double initial_penalty;
+    double total_time;
+    string input_name;
+    string scheme_name;
     vector<unordered_set<int>> adj;
     vector<int> color;
     vector<vector<int>> student_courses;
@@ -73,6 +80,7 @@ class Graph
     }
 
     void init(int n){
+        total_kempe_count = 0;
         track_subgraphs.clear();
         n_stu = 0;
         total_penalty = 0;
@@ -432,12 +440,14 @@ class Graph
             int j = rand() % (int)adj[i].size();
             double pen = total_penalty;
             kempe(i, adj_vector[i][j], 0);
+            total_kempe_count++;
             no_of_kempe++;
-            cout << "XKEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
+            // cout << "XKEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
             if(total_penalty >= pen){
                 kempe(i, adj_vector[i][j], 0);
+                total_kempe_count++;
                 no_of_kempe++;
-                cout << "NKEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
+                // cout << "NKEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
             }else{
                 real_kempe ++;
                 cout << "KEMPE at " << i << "," << adj_vector[i][j] << ": " << total_penalty / n_stu << "\n";
@@ -447,6 +457,7 @@ class Graph
         // printf("Multi KEMPE ends\n");
         cout << "No. of kempes applied : " << no_of_kempe << "\n";
         cout << "No. of real kempes applied : " << real_kempe << "\n";
+        cout << "Penalty : " << total_penalty / n_stu << endl;
 
     }
 
@@ -457,6 +468,7 @@ class Graph
             fill(kempe_done[i].begin(), kempe_done[i].end(), false);
         }
         int edge_cnt = 0;
+        int cnt_kem = 0;
         for(int i=0;i<V;i++){
             // unordered_set<int> ust;
             edge_cnt += adj[i].size();
@@ -475,6 +487,8 @@ class Graph
                 if(kempe_done[i][ele]) continue;
 
                 kempe(i, ele, true);
+                total_kempe_count++;
+                cnt_kem++;
                 // cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl; 
                 if(total_penalty < mn){
                     mn = total_penalty;
@@ -482,9 +496,11 @@ class Graph
                     y = ele;
                 }
                 kempe(i, ele, true);
+                total_kempe_count++;
                 // cout << "KEMPE at " << i << ", " << ele << ": " << total_penalty / n_stu << endl;
             }
         }
+        cout << "Kempe count : " << cnt_kem << endl;
         cout << "Edge count : " << edge_cnt << endl;
         cout << "size of track_subgraphs: " << track_subgraphs.size() << endl;
         return {x, y};
@@ -492,7 +508,7 @@ class Graph
 
     void hill_climbing_kempe(){
         cout << calculate_total_penalty() << " " << n_stu << endl;
-        int cnt = 1000;
+        int cnt = 100;
         double mn = INF;
         int kem = 0;
         while(cnt--){
@@ -502,15 +518,25 @@ class Graph
                 break;
             }
             kempe(p.first, p.second, false);
+            total_kempe_count++;
             kem ++;
             cout << kem << ". MAIN KEMPE at " << p.first << ", " << p.second << ": " << total_penalty / n_stu << endl;
             if(mn > total_penalty){
                 mn = total_penalty;
             }else{
-                break;
+                while(true){
+                    int x = rand() % V;
+                    if(adj[x].size() <= 1) continue;
+                    int y = rand() % (int)adj[x].size();
+                    vector<int> v(adj[x].begin(), adj[x].end());
+                    kempe(x, v[y], false);
+                    total_kempe_count++;
+                    cout << kem << ". RANDOM KEMPE at " << x << ", " << v[y] << ": " << total_penalty / n_stu << endl;
+                    break;
+                }
             }
-            
         }
+        total_penalty = mn;
         cout << "MIn : " << mn / n_stu << endl;
         cout << "Total KEMPE : " << kem << endl;
     }
@@ -579,6 +605,11 @@ class Graph
         }
         // cout << "Slots : " << calculate_slots_cnt() << "\n";
     }
+
+    void print_results(){
+        // ofstream ofs("out.csv");
+        ofs << input_name << "," << scheme_name << "," << calculate_slots_cnt() << "," << initial_penalty << "," << total_penalty  / n_stu << "," << total_time << "," << total_kempe_count << ",";
+    }
 };
 
 void read_crs(Graph & g, string filename){
@@ -641,27 +672,94 @@ void read_stu(Graph & g, string filename){
     fin.close();
 }
 
+void my_scheme_1(Graph & g){
+    auto start = high_resolution_clock::now();
+    g.scheme_name = "Largest degree first and stochastic hill climbing";
+    g.largest_degree_heuristic();
+    g.initial_penalty = g.calculate_total_penalty();
+    g.multi_kempe();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    g.total_time = duration.count() / 1e6;
+    g.print_results();
+}
+
+void my_scheme_2(Graph & g){
+    auto start = high_resolution_clock::now();
+    g.scheme_name = "Largest degree first and take minimum penalty out of all possible kempe and then a random move";
+    g.largest_degree_heuristic();
+    g.initial_penalty = g.calculate_total_penalty();
+    g.hill_climbing_kempe();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    g.total_time = duration.count() / 1e6;
+    g.print_results();
+}
+
+void my_scheme_3(Graph & g){
+    auto start = high_resolution_clock::now();
+    g.scheme_name = "Dsatur and stochastic hill climbing";
+    g.d_satur();
+    g.initial_penalty = g.calculate_total_penalty();
+    g.multi_kempe();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    g.total_time = duration.count() / 1e6;
+    g.print_results();
+}
+
+void my_scheme_4(Graph & g){
+    auto start = high_resolution_clock::now();
+    g.scheme_name = "Dsatur and take minimum penalty out of all possible kempe and then a random move";
+    g.d_satur();
+    g.initial_penalty = g.calculate_total_penalty();
+    g.hill_climbing_kempe();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    g.total_time = duration.count() / 1e6;
+    g.print_results();
+}
+
+
 void solve(){
     ll n, m;
     
-    Graph g = Graph(2);
     string crs, stu;
     cin >> crs >> stu;
     // cout << f1 << " " << f2 << "\n";
-    read_crs(g, crs);
-    read_stu(g, stu);
-    auto start = high_resolution_clock::now();
+    // Graph g = Graph(2);
+    // read_crs(g, crs);
+    // read_stu(g, stu);
+    // g.input_name = crs.substr(0, 8);
+    // my_scheme_4(g);
+    // ofs << endl << 1;
+
+    for(int i=0;i<4;i++){
+        Graph g = Graph(2);
+        read_crs(g, crs);
+        read_stu(g, stu);
+        g.input_name = crs.substr(0, 8);
+        if(i == 0) my_scheme_1(g);
+        else if(i == 1) my_scheme_2(g);
+        else if(i == 2) my_scheme_3(g);
+        else my_scheme_4(g);
+        ofs << endl;
+    }
+    ofs << endl;
+    // my_scheme_4(g);
+    
+    // auto start = high_resolution_clock::now();
     // g.largest_degree_heuristic();
-    g.d_satur();
+    // g.d_satur();
     // cout << g.calculate_slots_cnt() << " " << g.calculate_total_penalty() << "\n";
     
     // g.multi_kempe();
 
-    g.hill_climbing_kempe();
-    cout << "Slots : " << g.calculate_slots_cnt() << "\nPenalty : " << g.calculate_total_penalty() << "\n";
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by not input output: " << duration.count() / 1e6 << " seconds" << endl; 
+    // g.hill_climbing_kempe();
+    // cout << "Slots : " << g.calculate_slots_cnt() << endl;
+    // auto stop = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(stop - start);
+    // cout << "Time taken by not input output: " << duration.count() / 1e6 << " seconds" << endl; 
     // g.multi_kempe();
     // g.multi_kempe();
 
@@ -692,34 +790,16 @@ int main()
     //     cout << line << "\n";
     // }
     // f2.close();
+    ofs << "Input name,Scheme,Slots,Intitial Penalty, Final Penalty, Total Time (sec.), Total Kempe Chains Discovered" << endl;
     auto start = high_resolution_clock::now();
     ll tt = 1;
-    // cin >> tt;
+    cin >> tt;
     ll cs = 1;
     while (tt--)
         solve();
     auto stop = high_resolution_clock::now(); 
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() / 1e6 << " seconds" << endl; 
-    // vector<unordered_set<int>> vu;
-    // set<int> st;
-    // st.insert(1);
-    // st.insert(3);
-    // st.insert(2);
-    // vu.push_back(st);
-    // st.clear();
-    // st.insert(2);
-    // st.insert(6);
-    // vu.push_back(st);
-
-
-    // vector<vector<int>> v(vu.begin(), vu.end());
-    // for(int i=0;i<vu.begin();i++){
-    //     cout << i << ": ";
-    //     for(auto ele : vu[i]){
-    //         cout << ele << " ";
-    //     }
-    //     cout << endl;
-    // }
+    
     return 0;
 }

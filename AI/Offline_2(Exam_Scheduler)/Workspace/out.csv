@@ -1,0 +1,9 @@
+Input name,Scheme,Slots,Intitial Penalty, Final Penalty, Total Time (sec.), Total Kempe Chains Discovered
+yor-f-83,Largest degree first and stochastic hill climbing,23,65.6472,36.3719,35.6589,199903,
+yor-f-83,Largest degree first and take minimum penalty out of all possible kempe and then a random move,23,65.6472,34.6227,86.9211,636149,
+yor-f-83,Dsatur and stochastic hill climbing,20,61.6493,45.83,44.0917,199948,
+yor-f-83,Dsatur and take minimum penalty out of all possible kempe and then a random move,20,61.6493,44.7365,80.9843,430509,
+
+Input name,Scheme,Slots,Intitial Penalty, Final Penalty, Total Time (sec.), Total Kempe Chains Discovered
+car-s-91,Largest degree first and stochastic hill climbing,35,11.955,6.32642,148.358,199687,
+car-s-91,Largest degree first and take minimum penalty out of all possible kempe and then a random move,35,11.955,6.0885,812.937,1935466,
