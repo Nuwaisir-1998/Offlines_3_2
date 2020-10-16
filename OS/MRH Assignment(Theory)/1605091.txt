@@ -1,0 +1,19 @@
+A real-time system is a system where given some input, the output must be generated within a specific time
+limit. For example, in an ATM, the output which may be money, must be returned within a short period of time, after the user gives the correct input. So, scheduling a real-time system is of immense importance.
+The real-time system can be categorized as a) Hard Real-time System, b) Soft Real-time System. In a hard real-time system, all the deadlines must be met with 100% accuracy, but in a soft real-time system, deadlines should be met, but
+the accuracy must not be 100%. Again, the real-time system will have to respond to many events, and these events can
+be categorized as a) Periodic, b) Aperiodic. Periodic events occur at a regular interval, and on the contrary, aperiodic events
+occur unpredictably.
+Here are some characteristics of a scheduler of a real-time system.
+
+1. Static - Static scheduler makes a scheduling decision before the system starts running. It works only when perfect information 
+    is available about the work to be done and deadlines that have to be met.
+2. Dynamic - Dynamic scheduler decides at run time after execution has started. Doesn't have constraints like a static scheduler, meaning, the information about the work to be done is not necessary before the execution starts. The deadlines must be identified in run time.
+3. Fully Accurate - The scheduling algorithm for a real-time system must be fully accurate. A little bit of inconsistency may cause a severe negative impact. For example, if the autopilot system of an aircraft suddenly starts taking a wrong decision, it can result in a fatal crash. So, the algorithm must work perfectly in any situation.
+4. Fast - As there is a specified time limit for the output to be produced, the scheduler must be as fast as it needs to be.
+    So, the output of an event must be produced before the starting of another event. For example, in a patient monitoring system 
+    in an intensive care unit of a hospital, needs to be fast enough for the doctors to make the right decision. 
+5. Stable - A real-time scheduler must perform within the specified time limit, regardless of the workload. There is no
+    scope for a delay in the output in a real-time system.
+6. Multi-tasking - The scheduler must have the ability to perform multiple tasks simultaneously and give output within the specified time limit. For example, if we play multiple videos on our machine, one video must not affect the other one, and the quality and the audio synchronization must be perfect.
+7. Predictability - In the case of a static real-time system, it must have the ability to predict the performance of all individual tasks before execution. And in the case of a dynamic scheduler, predictability means the scheduler can satisfy the timing limitations of the critical tasks with a 100% guarantee in case it is a hard real-time system.
