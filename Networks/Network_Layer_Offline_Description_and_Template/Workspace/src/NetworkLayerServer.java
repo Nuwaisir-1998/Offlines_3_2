@@ -89,8 +89,19 @@ public class NetworkLayerServer {
         }
         */
 
-        // swapping startingRouterId th router with 0th router.
+        Router startingRouter = routerMap.get(startingRouterId);
+        if(!startingRouter.getState()) {
+            System.out.println("Can't start DVR from " + startingRouterId + " as it is DOWN.");
+            return;
+        }
         int convergence = 0;
+
+//        routerMap.get(4).setState(false);
+//        routerMap.get(1).setState(false);
+//        routerMap.get(2).setState(true);
+//        routerMap.get(7).setState(true);
+//        routerMap.get(3).setState(true);
+
         // lock statechanger
         System.out.println(RouterStateChanger.msg);
         RouterStateChanger.islocked = true;
@@ -98,7 +109,7 @@ public class NetworkLayerServer {
         for(Router r : routers){
             System.out.println(r.getRouterId() + " is " + r.getState());
         }
-
+        // swapping startingRouterId th router with 0th router.
         System.out.println(RouterStateChanger.msg);
         while(true) {
             for (int i = 0; i < routers.size(); i++) {
@@ -114,14 +125,17 @@ public class NetworkLayerServer {
 //        }
             convergence = 0;
             for (Router r : routers) {
+                if(!r.getState()) continue;
                 ArrayList<RoutingTableEntry> T = r.getRoutingTable();
                 ArrayList<Integer> all_neighbors = r.getNeighborRouterIDs();
                 ArrayList<Integer> all_active_neighbors = new ArrayList<>();
 
                 for (Integer i : all_neighbors) {
                     Router neighbor = routerMap.get(i);
-                    if (neighbor.getState())
+                    if (neighbor.getState()) {
+//                        System.out.println(neighbor.getRouterId() + " updated by " + r.getRouterId());
                         convergence += neighbor.sfupdateRoutingTable(r) ? 1 : 0;
+                    }
                 }
             }
             System.out.println(convergence);

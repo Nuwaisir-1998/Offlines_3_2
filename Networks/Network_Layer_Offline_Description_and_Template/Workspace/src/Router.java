@@ -68,6 +68,7 @@ public class Router {
      * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFTY;
      */
     public void initiateRoutingTable() {
+        if(!state) return;
         System.out.println(routerId + " got initialized.");
         int router_cnt = NetworkLayerServer.routers.size();
 
@@ -117,7 +118,7 @@ public class Router {
         int router_cnt = NetworkLayerServer.routers.size();
         // dist[i] is the distance of the router i from neighbor router
         ArrayList<Double> dist = new ArrayList<Double>(Collections.nCopies(router_cnt + 1, 0.0));
-        for(RoutingTableEntry rte : neighbor.routingTable){
+        for(RoutingTableEntry rte : neighbor.getRoutingTable()){
             dist.set(rte.getRouterId(), rte.getDistance());
         }
         for(RoutingTableEntry rte : routingTable){
@@ -137,7 +138,7 @@ public class Router {
         // dist[i] is the distance of the router i from neighbor router
         ArrayList<Double> dist = new ArrayList<Double>(Collections.nCopies(router_cnt + 1, 0.0));
         ArrayList<Integer> neighbor_next_hop = new ArrayList<>(Collections.nCopies(router_cnt + 1, 0));
-        for(RoutingTableEntry rte : neighbor.routingTable){
+        for(RoutingTableEntry rte : neighbor.getRoutingTable()){
             dist.set(rte.getRouterId(), rte.getDistance());
             neighbor_next_hop.set(rte.getRouterId(), rte.getGatewayRouterId());
         }
@@ -149,7 +150,7 @@ public class Router {
                 double prev_dist = rte.getDistance();
                 rte.setDistance(1.0 + dist.get(to));
                 rte.setGatewayRouterId(neighbor.getRouterId());
-                System.out.println("router " + from + " updated from " + neighbor.getRouterId());
+//                System.out.println("router " + from + " updated from " + neighbor.getRouterId());
                 if(prev_dist != rte.getDistance()) ret = true;
             }
         }
