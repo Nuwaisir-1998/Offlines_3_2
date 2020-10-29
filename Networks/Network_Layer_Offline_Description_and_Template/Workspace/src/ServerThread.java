@@ -28,6 +28,9 @@ public class ServerThread implements Runnable {
                 and send back to client
         3. Either send acknowledgement with number of hops or send failure message back to client
         */
+        networkUtility.write(endDevice); // Sending endDevice to corresponding client
+        networkUtility.write(NetworkLayerServer.endDevices);
+
     }
 
 

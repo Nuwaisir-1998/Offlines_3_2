@@ -31,5 +31,12 @@ public class Client {
         17. }
         18. Report average number of hops and drop rate
         */
+
+        EndDevice endDevice = (EndDevice)networkUtility.read();
+//        System.out.println("My device is : " + endDevice.getDeviceID() + ", " + endDevice.getIpAddress() + ", " + endDevice.getGateway());
+        ArrayList<EndDevice> endDevices = (ArrayList<EndDevice>) networkUtility.read();
+        for(EndDevice e : endDevices){
+            System.out.println(e.getDeviceID() + ", " + e.getIpAddress() + ", " + e.getGateway());
+        }
     }
 }

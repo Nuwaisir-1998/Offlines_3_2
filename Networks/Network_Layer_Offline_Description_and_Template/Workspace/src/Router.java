@@ -34,8 +34,6 @@ public class Router {
         this.gatewayIDtoIP = gatewayIDtoIP;
         routingTable = new ArrayList<>();
 
-
-
         /**
          * 80% Probability that the router is up
          */
