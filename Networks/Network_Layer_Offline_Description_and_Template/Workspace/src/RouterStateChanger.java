@@ -20,6 +20,7 @@ public class RouterStateChanger implements Runnable {
                 try {
                     synchronized (msg) {
                         msg.wait();
+                        System.out.println("unlocked : " + msg);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

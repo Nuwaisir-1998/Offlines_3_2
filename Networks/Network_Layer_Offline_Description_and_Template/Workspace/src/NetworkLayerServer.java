@@ -43,7 +43,8 @@ public class NetworkLayerServer {
         initRoutingTables(); //Initialize routing tables for all routers
 
         DVR(7); //Update routing table using distance vector routing until convergence
-        simpleDVR(1);
+//        simpleDVR(1);
+
         stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
         while(true) {
@@ -89,26 +90,51 @@ public class NetworkLayerServer {
         */
 
         // swapping startingRouterId th router with 0th router.
-        for(int i=0;i<routers.size();i++){
-            if(routers.get(i).getRouterId() == startingRouterId){
-                Router temp = routers.get(0);
-                routers.set(0, routers.get(i));
-                routers.set(i, temp);
-                break;
-            }
+        int convergence = 0;
+        // lock statechanger
+        System.out.println(RouterStateChanger.msg);
+        RouterStateChanger.islocked = true;
+//        RouterStateChanger.msg = false;
+        for(Router r : routers){
+            System.out.println(r.getRouterId() + " is " + r.getState());
         }
+
+        System.out.println(RouterStateChanger.msg);
+        while(true) {
+            for (int i = 0; i < routers.size(); i++) {
+                if (routers.get(i).getRouterId() == startingRouterId) {
+                    Router temp = routers.get(0);
+                    routers.set(0, routers.get(i));
+                    routers.set(i, temp);
+                    break;
+                }
+            }
 //        for(Router r : routers){
 //            System.out.println(r.getRouterId());
 //        }
-        for(Router r : routers){
-            ArrayList<RoutingTableEntry> T = r.getRoutingTable();
-            ArrayList<Integer> all_neighbors = r.getNeighborRouterIDs();
-            ArrayList<Integer> all_active_neighbors = new ArrayList<>();
-            // finding all active neighbors
-            for(Integer i : all_neighbors){
-                Router neighbor = routerMap.get(i);
-                if(neighbor.getState()) neighbor.sfupdateRoutingTable(r);
+            convergence = 0;
+            for (Router r : routers) {
+                ArrayList<RoutingTableEntry> T = r.getRoutingTable();
+                ArrayList<Integer> all_neighbors = r.getNeighborRouterIDs();
+                ArrayList<Integer> all_active_neighbors = new ArrayList<>();
+
+                for (Integer i : all_neighbors) {
+                    Router neighbor = routerMap.get(i);
+                    if (neighbor.getState())
+                        convergence += neighbor.sfupdateRoutingTable(r) ? 1 : 0;
+                }
             }
+            System.out.println(convergence);
+            if(convergence == 0) break;
+        }
+
+        System.out.println("ended");
+        // unlock statechanger
+        RouterStateChanger.islocked = false;
+//        RouterStateChanger.msg = true;
+        for(Router router : routers){
+            System.out.println("-------------------------");
+            router.printRoutingTable();
         }
 
     }

@@ -68,6 +68,7 @@ public class Router {
      * for itself, distance=0; for any connected router with state=true, distance=1; otherwise distance=Constants.INFTY;
      */
     public void initiateRoutingTable() {
+        System.out.println(routerId + " got initialized.");
         int router_cnt = NetworkLayerServer.routers.size();
 
         // marks the neighbor router which is in UP state
@@ -112,6 +113,7 @@ public class Router {
      * @param neighbor
      */
     public boolean updateRoutingTable(Router neighbor) {
+        boolean ret = false;
         int router_cnt = NetworkLayerServer.routers.size();
         // dist[i] is the distance of the router i from neighbor router
         ArrayList<Double> dist = new ArrayList<Double>(Collections.nCopies(router_cnt + 1, 0.0));
@@ -120,31 +122,38 @@ public class Router {
         }
         for(RoutingTableEntry rte : routingTable){
             int to = rte.getRouterId();
-            if(dist.get(to) < rte.getDistance()){
+            if(dist.get(to) + 1.0 < rte.getDistance()){
+                ret = true;
                 rte.setDistance(1.0 + dist.get(to));
                 rte.setGatewayRouterId(neighbor.getRouterId());
             }
         }
-        return false;
+        return ret;
     }
 
     public boolean sfupdateRoutingTable(Router neighbor) {
+        boolean ret = false;
         int router_cnt = NetworkLayerServer.routers.size();
         // dist[i] is the distance of the router i from neighbor router
         ArrayList<Double> dist = new ArrayList<Double>(Collections.nCopies(router_cnt + 1, 0.0));
+        ArrayList<Integer> neighbor_next_hop = new ArrayList<>(Collections.nCopies(router_cnt + 1, 0));
         for(RoutingTableEntry rte : neighbor.routingTable){
             dist.set(rte.getRouterId(), rte.getDistance());
+            neighbor_next_hop.set(rte.getRouterId(), rte.getGatewayRouterId());
         }
         for(RoutingTableEntry rte : routingTable){
             int to = rte.getRouterId();
             int next_hop = rte.getGatewayRouterId();
             int from = routerId;
-            if(next_hop == neighbor.getRouterId() || (dist.get(to) < rte.getDistance() && next_hop != from)){
+            if(next_hop == neighbor.getRouterId() || (dist.get(to) + 1.0 < rte.getDistance() && neighbor_next_hop.get(to) != from)){
+                double prev_dist = rte.getDistance();
                 rte.setDistance(1.0 + dist.get(to));
                 rte.setGatewayRouterId(neighbor.getRouterId());
+                System.out.println("router " + from + " updated from " + neighbor.getRouterId());
+                if(prev_dist != rte.getDistance()) ret = true;
             }
         }
-        return false;
+        return ret;
     }
 
     /**
