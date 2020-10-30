@@ -2,14 +2,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 //Work needed
-public class Client {
+public class Client2 {
     public static void main(String[] args) throws InterruptedException {
         NetworkUtility networkUtility = new NetworkUtility("127.0.0.1", 4444);
         System.out.println("Connected to server");
         /**
          * Tasks
          */
-        
+
         /*
         1. Receive EndDevice configuration from server
         2. Receive active client list from server
@@ -59,7 +59,6 @@ public class Client {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         System.out.println("Exiting");
-
 
 
     }

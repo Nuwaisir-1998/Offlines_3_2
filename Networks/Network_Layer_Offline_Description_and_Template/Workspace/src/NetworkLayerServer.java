@@ -42,6 +42,12 @@ public class NetworkLayerServer {
 
         initRoutingTables(); //Initialize routing tables for all routers
 
+//        for (Map.Entry<IPAddress, Integer> entry : clientInterfaces.entrySet()) {
+//            IPAddress key = entry.getKey();
+//            int value = entry.getValue();
+//            System.out.println(key.get);
+//        }
+
         DVR(7); //Update routing table using distance vector routing until convergence
 //        simpleDVR(1);
 

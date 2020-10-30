@@ -1,5 +1,7 @@
 
 
+import sun.rmi.runtime.NewThreadAction;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -28,9 +30,25 @@ public class ServerThread implements Runnable {
                 and send back to client
         3. Either send acknowledgement with number of hops or send failure message back to client
         */
+
         networkUtility.write(endDevice); // Sending endDevice to corresponding client
         networkUtility.write(NetworkLayerServer.endDevices);
 
+        while(true) {
+            Packet packet = (Packet) networkUtility.read();
+            deliverPacket(packet);
+            if (packet.getSpecialMessage().equals("SHOW_ROUTE")) {
+
+            }
+            Packet send_to_client = new Packet("Acknowlegement", "", packet.getDestinationIP(), packet.getSourceIP());
+            networkUtility.write(send_to_client);
+        }
+
+    }
+
+    public String get_last_24_bits(IPAddress ipAddress){
+        String [] temp = ipAddress.getString().split("\\.");
+        return temp[0] + temp[1] + temp[2];
     }
 
 
@@ -63,6 +81,28 @@ public class ServerThread implements Runnable {
         4. If 3(a) occurs at any stage, packet will be dropped,
             otherwise successfully sent to the destination router
         */
+        Router s = new Router();
+        Router d = new Router();
+        /***************        1         ****************/
+        for(Router r : NetworkLayerServer.routers){
+            IPAddress router_interface_ip = r.getInterfaceAddresses().get(0);
+            String last_24_bits = get_last_24_bits(router_interface_ip);
+            if(last_24_bits.equals(get_last_24_bits(p.getSourceIP()))){
+                s = r;
+                break;
+            }
+        }
+
+        /***************        2         ****************/
+        for(Router r : NetworkLayerServer.routers){
+            IPAddress router_interface_ip = r.getInterfaceAddresses().get(0);
+            String last_24_bits = get_last_24_bits(router_interface_ip);
+            if(last_24_bits.equals(get_last_24_bits(p.getDestinationIP()))){
+                d = r;
+                break;
+            }
+        }
+        System.out.println(s.getRouterId() + " to " + d.getRouterId());
 
         return false;
     }
