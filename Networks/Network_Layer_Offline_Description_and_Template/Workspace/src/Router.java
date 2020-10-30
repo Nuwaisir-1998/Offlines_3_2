@@ -1,9 +1,10 @@
 //Work needed
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Router {
+public class Router implements Serializable {
     private int routerId;
     private int numberOfInterfaces;
     private ArrayList<IPAddress> interfaceAddresses;//list of IP address of all interfaces of the router
@@ -67,7 +68,7 @@ public class Router {
      */
     public void initiateRoutingTable() {
         if(!state) return;
-        System.out.println(routerId + " got initialized.");
+//        System.out.println(routerId + " got initialized.");
         int router_cnt = NetworkLayerServer.routers.size();
 
         // marks the neighbor router which is in UP state

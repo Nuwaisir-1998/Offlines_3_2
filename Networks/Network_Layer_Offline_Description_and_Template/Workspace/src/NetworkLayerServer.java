@@ -42,15 +42,20 @@ public class NetworkLayerServer {
 
         initRoutingTables(); //Initialize routing tables for all routers
 
-//        for (Map.Entry<IPAddress, Integer> entry : clientInterfaces.entrySet()) {
+
+
+//        for (Map.Entry<IPAddress, Integer> entry : interfacetoRouterID.entrySet()) {
 //            IPAddress key = entry.getKey();
 //            int value = entry.getValue();
-//            System.out.println(key.get);
+//            System.out.println(key + " -> " + value);
 //        }
+
+
 
         DVR(7); //Update routing table using distance vector routing until convergence
 //        simpleDVR(1);
-
+        // printing initial state of each router
+        for(Router router : routers) System.out.println("Router " + router.getRouterId() + " is " + router.getState());
         stateChanger = new RouterStateChanger();//Starts a new thread which turns on/off routers randomly depending on parameter Constants.LAMBDA
 
         while(true) {
@@ -109,12 +114,11 @@ public class NetworkLayerServer {
 //        routerMap.get(3).setState(true);
 
         // lock statechanger
-        System.out.println(RouterStateChanger.msg);
         RouterStateChanger.islocked = true;
 //        RouterStateChanger.msg = false;
-        for(Router r : routers){
-            System.out.println(r.getRouterId() + " is " + r.getState());
-        }
+//        for(Router r : routers){
+//            System.out.println(r.getRouterId() + " is " + r.getState());
+//        }
         // swapping startingRouterId th router with 0th router.
         System.out.println(RouterStateChanger.msg);
         while(true) {
@@ -148,14 +152,17 @@ public class NetworkLayerServer {
             if(convergence == 0) break;
         }
 
-        System.out.println("ended");
+        System.out.println("DVR ended");
         // unlock statechanger
         RouterStateChanger.islocked = false;
-//        RouterStateChanger.msg = true;
-        for(Router router : routers){
-            System.out.println("-------------------------");
-            router.printRoutingTable();
-        }
+//        synchronized (RouterStateChanger.msg) {
+//            RouterStateChanger.msg.notify();
+//            System.out.println("unlocked : " + msg);
+//        }
+//        for(Router router : routers){
+//            System.out.println("-------------------------");
+//            router.printRoutingTable();
+//        }
 
     }
 

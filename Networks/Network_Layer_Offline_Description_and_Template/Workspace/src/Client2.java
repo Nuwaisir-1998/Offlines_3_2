@@ -45,9 +45,9 @@ public class Client2 {
 //        System.out.println("To whom?");
 //        Scanner sc = new Scanner(System.in);
 //        int to = sc.nextInt();
-        for(int i=0;i<5;i++){
+        for(int i=0;i<100;i++){
             Packet packet = new Packet("I am client " + endDevice.getDeviceID(), "", endDevice.getIpAddress(), endDevices.get(0).getIpAddress());
-            if(i == 20){
+            if(i == 5){
 
             }else{
                 networkUtility.write(packet);
@@ -55,11 +55,12 @@ public class Client2 {
                 System.out.println(from_server.getMessage());
             }
         }
-        System.out.println("Turn me off? Any key: YES");
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
+//        System.out.println("Turn me off? Any key: YES");
+//        Scanner sc = new Scanner(System.in);
+//        int n = sc.nextInt();
         System.out.println("Exiting");
-
+        Packet exit_packet = new Packet("exit", "", new IPAddress("0.0.0.0"), new IPAddress("0.0.0.0"));
+        networkUtility.write(exit_packet);
 
     }
 }

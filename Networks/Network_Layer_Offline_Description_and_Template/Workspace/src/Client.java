@@ -1,4 +1,8 @@
+import javax.lang.model.type.ArrayType;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 //Work needed
@@ -45,9 +49,37 @@ public class Client {
 //        System.out.println("To whom?");
 //        Scanner sc = new Scanner(System.in);
 //        int to = sc.nextInt();
-        for(int i=0;i<5;i++){
-            Packet packet = new Packet("I am client " + endDevice.getDeviceID(), "", endDevice.getIpAddress(), endDevices.get(0).getIpAddress());
+        Random random = new Random(System.currentTimeMillis());
+        for(int i=0;i<1000;i++){
+            int rnd = Math.abs(random.nextInt(endDevices.size()));
+            System.out.println(endDevice.getDeviceID() + " sending packet to " + endDevices.get(rnd).getDeviceID());
+            Packet packet = new Packet("I am client " + endDevice.getDeviceID(), "", endDevice.getIpAddress(), endDevices.get(rnd).getIpAddress());
             if(i == 20){
+//                System.out.println(i);
+                packet.setSpecialMessage("SHOW_ROUTE");
+//                System.out.println(packet.getMessage() + "," + packet.getSpecialMessage());
+                networkUtility.write(packet);
+                Packet status = (Packet)networkUtility.read();
+//                System.out.println(from_server.getMessage());
+                if(status.getMessage().equals("Packet Dropped")) {
+                    System.out.println(" dropped ");
+
+                }else{
+                    ArrayList<Router> routing_path = (ArrayList<Router>) networkUtility.read();
+                    if(routing_path == null) System.out.println("null routing path");
+                    else {
+                        int hop_count = routing_path.size() - 1;
+                        System.out.println("Hop count : " + hop_count);
+                        System.out.println("Routing Path");
+                        for (Router r : routing_path) {
+                            System.out.print(r.getRouterId() + " ");
+                        }
+                        System.out.println();
+                        for(Router r : routing_path){
+                            r.printRoutingTable();
+                        }
+                    }
+                }
 
             }else{
                 networkUtility.write(packet);
@@ -55,11 +87,12 @@ public class Client {
                 System.out.println(from_server.getMessage());
             }
         }
-        System.out.println("Turn me off? Any key: YES");
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
+//        System.out.println("Turn me off? Any key: YES");
+//        Scanner sc = new Scanner(System.in);
+//        int n = sc.nextInt();
         System.out.println("Exiting");
-
+        Packet exit_packet = new Packet("exit", "", new IPAddress("0.0.0.0"), new IPAddress("0.0.0.0"));
+        networkUtility.write(exit_packet);
 
 
     }

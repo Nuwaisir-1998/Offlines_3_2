@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 //Done!
 public class Packet implements Serializable {
@@ -7,6 +8,7 @@ public class Packet implements Serializable {
     private String specialMessage;  //ex: "SHOW_ROUTE" request
     private IPAddress destinationIP;
     private IPAddress sourceIP;
+
     int hopcount;
 
     public Packet(String message, String specialMessage, IPAddress sourceIP, IPAddress destinationIP) {
@@ -48,5 +50,4 @@ public class Packet implements Serializable {
     public void setDestinationIP(IPAddress destinationIP) {
         this.destinationIP = destinationIP;
     }
-
 }
