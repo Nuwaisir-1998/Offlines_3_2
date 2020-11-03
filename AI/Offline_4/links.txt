@@ -1,0 +1,2 @@
+https://ktiml.mff.cuni.cz/~bartak/constraints/propagation.html
+https://ktiml.mff.cuni.cz/~bartak/constraints/ordering.html

@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "bitset": "cpp",
+        "iomanip": "cpp",
+        "numeric": "cpp",
+        "ostream": "cpp",
+        "cstdlib": "cpp"
+    }
+}
