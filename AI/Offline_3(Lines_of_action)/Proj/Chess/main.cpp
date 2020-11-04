@@ -21,7 +21,7 @@ typedef vector<pll> vpll;
 #define MOD9 998244353
 #define PI acos(-1)
 #define MAXN 200005
-#define INF 1000000000000000000
+#define INF 1000000000
 #define nl '\n'
 #define MAX(x) *max_element(all(x))
 #define MIN(x) *min_element(all(x))
@@ -65,24 +65,31 @@ gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 
 struct Position {
     int x, y;
+    Position(){
+        x = -1, y = -1;
+    }
     Position(int x, int y){
         this -> x = x;
         this -> y = y;
     }
     void print(){
-        cout << "(" << x << "," << y << ")" << endl;
+        cout << x << "," << y << endl;
     }
 };
 
 struct Game {
     int dimension;
     int depth_limit;
+    Position move_from;
+    Position move_to;
     vector<int> row_total;
     vector<int> col_total;
     vector<int> diag_rl_total;  // slope = 1, starting from (0, 0), then right 
     vector<int> diag_lr_total;  // slope = -1, starting from (0, dimension - 1), then down
     vector<vector<int>> board;
     vector<Position> pos_color[2];  // pos_color[0] -> black's position
+    vector<vector<int>> cum_white;
+    vector<vector<int>> cum_black;
     // map<int, Position> map_id_pos[2];
     vector<vector<int>> piece_square_table = 
     {
@@ -220,7 +227,7 @@ struct Game {
         Position end_p(-1, -1);
         int r = p.x;
         int c = p.y;
-        int cnt = diag_lr_total[r + c];
+        int cnt = diag_rl_total[r + c];
         if(c - cnt >= 0 && r + cnt < dimension && board[r + cnt][c - cnt] != color){
             end_p.x = r + cnt;
             end_p.y = c - cnt;
@@ -268,11 +275,12 @@ struct Game {
     /***************************** Heuristics ********************************/
     
     int heuristic_piece_square_table(int color){
-        int n = dimension;
+        int n = pos_color[color].size();
         int sum = 0;
         for(int i=0;i<n;i++){
             int x = pos_color[color][i].x;
             int y = pos_color[color][i].y;
+            // cout << x << "," << y << " -> " << piece_square_table[x][y] << endl;
             sum += piece_square_table[x][y];
         }
         return sum;
@@ -298,16 +306,20 @@ struct Game {
 
 
 
+
+
     /****************************** Minimax with alpha beta pruning ************************************/
 
-    int backtrack(Game game, int depth, int color, int level){
-        assert(depth_limit != -1);
-        if(depth == game.depth_limit){
-            return SOMETHING; // start from here tomorrow
+    // sets the next_move
+    int backtrack(Game game, int depth, int color, bool isMax, int alpha, int beta){
+        if(depth == 0){
+            return game.heuristic_piece_square_table(color);
         }
         int n = game.pos_color[color].size();
-        int mx = -1e9;
-        int mn = 1e9;
+        int mx = -INF;
+        int mn = INF;
+        Position from;
+        Position next_move;
         for(int i=0;i<n;i++){
             vector<Position> end_positions = game.generate_all_moves(game.pos_color[color][i], color);
             for(auto ep : end_positions){
@@ -317,47 +329,107 @@ struct Game {
                 new_board[start_pos.x][start_pos.y] = BLANK;
                 new_board[end_pos.x][end_pos.y] = color;
                 Game new_game(new_board);
-                int result = backtrack(new_game, depth + 1, abs(color - 1), abs(level - 1));
-                if(level == ALPHA){
-                    if(result <= mx) return mx;
-                    mx = max(mx, result);
+
+                // new_game.print_board();
+                // cout << "heu : " << new_game.heuristic_piece_square_table(color) << endl;
+                
+                int result = backtrack(new_game, depth - 1, color, !isMax, alpha, beta);
+                // cout << "d : " << depth << endl;
+                // start_pos.print();
+                // end_pos.print();
+                // cout << result << endl;
+                // cout << "-----\n";
+
+                if(isMax){
+                    if(mx < result){
+                        mx = result;
+                        from = start_pos;
+                        next_move = ep;
+                    }
+                    alpha = max(alpha, mx);
+                    if(beta <= alpha) {
+                        this -> move_from = start_pos;
+                        this -> move_to = next_move;
+                        // cout << "mx : " << mx << endl;
+                        return mx;
+                    }
+                    // mx = max(mx, result);
+                    
                 }else{
-                    if(result >= mn) return mn;
-                    mn = min(mn, result);
+                    if(mn > result){
+                        mn = result;
+                        from = start_pos;
+                        next_move = ep;
+                    }
+                    beta = min(beta, mn);
+                    if(beta <= alpha) {
+                        this -> move_from = start_pos;
+                        this -> move_to = next_move;
+                        // cout << "mn : " << mn << endl;
+                        return mn;
+                    }
                 }
             }
+        }
+        this -> move_from = from;
+        this -> move_to = next_move;
+        if(isMax){
+            // cout << "mx : " << mx << endl;
+            return mx;
+        }
+        else {
+            // cout << "mn : " << mn << endl;
+            return mn;
         }
     }
 
     /****************************** Printer ************************************/
 
-    void print(){
-        // cout << "Dimension : " << dimension << endl;
-        // cout << "Board:\n";
-        // for(auto i : board){
-        //     for(auto j : i){ 
-        //         cout << j << " ";
-        //     }
-        //     cout << endl;
-        // }
-        // cout << "------------------\n";
-        // cout << "row_total:" << endl;
-        // printv(row_total);
+    void print_best_move(){
+        move_from.print();
+        move_to.print();
+    }
 
-        // cout << "col_total:" << endl;
-        // printv(col_total);
-
-        // cout << "diag_rl_total" << endl;
-        // printv(diag_rl_total);
-
-        // cout << "diag_lr_total" << endl;
-        // printv(diag_lr_total);
-
-        Position p(6, 5);
-        vector<Position> v = generate_all_moves(p, 0);
-        for(auto ele : v){
-            ele.print();
+    void print_board(){
+        for(int i=0;i<dimension;i++){
+            for(int j=0;j<dimension;j++){
+                cout << board[i][j] << " ";
+            }
+            cout << endl;
         }
+    }
+
+    void print(){
+        cout << "Dimension : " << dimension << endl;
+        cout << "Board:\n";
+        for(auto i : board){
+            for(auto j : i){ 
+                cout << j << " ";
+            }
+            cout << endl;
+        }
+        cout << "------------------\n";
+        cout << "row_total:" << endl;
+        printv(row_total);
+
+        cout << "col_total:" << endl;
+        printv(col_total);
+
+        cout << "diag_rl_total" << endl;
+        printv(diag_rl_total);
+
+        cout << "diag_lr_total" << endl;
+        printv(diag_lr_total);
+
+        cout << "move : from -> to" << endl;
+        move_from.print();
+        move_to.print();
+
+        // Position p(6, 5);
+        // vector<Position> v = generate_all_moves(p, 0);
+        // for(auto ele : v){
+        //     ele.print();
+        // }
     }
 };
 
@@ -378,7 +450,13 @@ void solve(ll cs){
     }
 
     Game b(board);
-    b.print();
+    // b.backtrack(b, 1, W, true, -INF, INF);
+    // b.backtrack(b, 2, W, true, -INF, INF);
+    // b.backtrack(b, 3, W, true, -INF, INF);
+    b.backtrack(b, 4, W, true, -INF, INF);
+    // b.backtrack(b, 5, W, true, -INF, INF);
+    b.print_best_move();
+    // b.print();
     // cout << "finished 2 \n";
 }
 
