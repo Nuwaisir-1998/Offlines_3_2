@@ -329,7 +329,6 @@ struct Game {
 
     vector<Position> generate_all_moves(Position p, int color){
         vector<Position> moves;
-        
         Position p_end = move_up(p, color);
         if(p_end.x != -1) moves.push_back(p_end);
 
@@ -349,6 +348,8 @@ struct Game {
         if(p_end.x != -1) moves.push_back(p_end);
 
         p_end = move_down_right(p, color);
+        cout << "fr : " << p.x << " " << p.y << endl;
+        cout << "dr : " << p_end.x << " " << p_end.y << endl;
         if(p_end.x != -1) moves.push_back(p_end);
 
         p_end = move_down_left(p, color);
@@ -534,48 +535,59 @@ struct Lines_of_action{
 
 
 };
+Position dum(){
+    return {1, 1};
+}
 
 
 void solve(ll cs){
     int i, j, dimension = 8;
     // cin >> dimension;
-    vector<vector<int>> board(dimension, vector<int> (dimension));
-    for(i=0;i<dimension;i++) {
-        for(j=0;j<dimension;j++){
-            cin >> board[i][j];
-        }
+    // vector<vector<int>> board(dimension, vector<int> (dimension));
+    // for(i=0;i<dimension;i++) {
+    //     for(j=0;j<dimension;j++){
+    //         cin >> board[i][j];
+    //     }
+    // }
+
+    vector<vector<int>> board = {
+        {2, 1, 0, 1, 1, 1, 1, 2},
+        {0, 2, 2, 2, 2, 2, 2, 0},
+        {2, 1, 2, 2, 2, 2, 2, 0},
+        {0, 1, 0, 2, 2, 2, 2, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 1, 2, 0, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 2, 0},
+        {2, 1, 1, 2, 1, 1, 1, 2}
+    };
+    // int start_y, start_x, end_x, end_y;
+    // char ch;
+    // cin >> start_x >> start_y;
+    // cin >> end_x >> end_y;
+
+
+    // Position p1(start_x, start_y);
+    // Position p2(end_x, end_y);
+    Game b(board);
+    
+    // b.make_move(p1, p2);
+    Position p1(6, 2);
+    Position p2(3, 5);
+    Position p(4, 7);
+    // cout << b.exists_left_diag(W, p, p1) << endl;
+    // b.print();
+    // cout << b.exists_right_diag(B, p2, p1) << endl;
+    vector<Position> v = b.generate_all_moves(p, B);
+    for(auto ele : v){
+        cout << ele.x << " " << ele.y << endl;
     }
 
-    // vector<vector<int>> board = {
-    //     {2, 1, 1, 1, 1, 1, 1, 2},
-    //     {0, 2, 2, 2, 2, 2, 2, 0},
-    //     {0, 2, 2, 2, 2, 2, 2, 0},
-    //     {0, 2, 0, 2, 2, 2, 2, 0},
-    //     {0, 2, 2, 2, 2, 2, 2, 0},
-    //     {0, 2, 2, 2, 2, 2, 2, 0},
-    //     {0, 2, 2, 2, 2, 2, 2, 0},
-    //     {2, 1, 1, 1, 1, 1, 1, 2}
-    // };
-    int start_y, start_x, end_x, end_y;
-    char ch;
-    cin >> start_x >> start_y;
-    cin >> end_x >> end_y;
 
-    std::ofstream ofs ("check_moves", std::ofstream::out);
-    ofs << start_x << " " << start_y << endl;
-    ofs << end_x << " " << end_y << endl;
-    ofs.close();
-
-    Position p1(start_x, start_y);
-    Position p2(end_x, end_y);
-    Game b(board);
-    // b.make_move(p1, p2);
-    
-    b.backtrack(b, 4, B, true, -INF, INF);
+    // b.backtrack(b, 4, B, true, -INF, INF);
     // b.backtrack(b, 5, W, true, -INF, INF);
     // b.make_move(b.get_best_move().first, b.get_best_move().second);
-    b.print_best_move();
-    b.make_move(b.get_best_move().first, b.get_best_move().second);
+    // b.print_best_move();
+    // b.make_move(b.get_best_move().first, b.get_best_move().second);
     // b.print_board();
     // b.print();
     // cout << "finished 2 \n";
@@ -585,8 +597,8 @@ int main()
 {
     ios::sync_with_stdio(false);
 #ifndef ONLINE_JUDGE
-    freopen("in", "r", stdin);
-    // freopen("out", "w", stdout);
+    freopen("in_test", "r", stdin);
+    freopen("out_test", "w", stdout);
 #endif // ONLINE_JUDGE
 
     ll tt = 1;

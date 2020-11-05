@@ -48,6 +48,9 @@ def main():
 			for e in p.event.get():
 				if e.type == p.QUIT:
 					running = False
+
+
+				#Mouse handler
 				elif e.type == p.MOUSEBUTTONDOWN:
 					location = p.mouse.get_pos() # x, y location of mouse
 					col = location[0] // SQ_SIZE
@@ -78,11 +81,16 @@ def main():
 						my_turn = False
 						sqSeleceted = ()
 						playerClicks = []
+					#key handler
+					#Undo
+					# elif e.type == p.KEYDOWN:
+					# 	if e.key == p.K_z:
+					# 		gs.undoMove()
 		else:
 			my_turn = True
 			out = subprocess.run('sh main.sh', shell=True, capture_output=True)
 			val = out.stdout.decode()
-
+			print(val)
 			start_x = int(val[0])
 			start_y = int(val[2])
 			end_x = int(val[5])
@@ -98,6 +106,20 @@ def main():
 		drawGameState(screen, gs)
 		clock.tick(MAX_FPS)
 		p.display.flip()
+
+def highlighSquare(screen, gs, validMoves, sqSelected):
+	if sqSelected != ():
+		r, c = sqSelected
+		if gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'):
+			s = p.Surface((SQ_SIZE, SQ_SIZE))
+			s.set_alpha(100)
+			s.fill(p.Color('blue'))
+			screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
+
+			s.fill(p.Color('yellow'))
+			for move in validMoves:
+				if move.startRow == r and move.startCol == c:
+					screen.blit(s, (SQ_SIZE * move.endCol, SQ_SIZE * move.endRow))
 
 
 # Draw the squares on the board
