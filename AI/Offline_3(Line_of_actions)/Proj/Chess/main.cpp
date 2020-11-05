@@ -163,7 +163,8 @@ struct Game {
         pair<Position, Position> p = sort_left_to_right_col(p1, p2);
         Position start = p.first;
         Position end = p.second;
-        for(int i=start.y; i<=end.y; i++){
+        for(int i=start.y+1; i<end.y; i++){
+            // if(i == start.y) continue;
             if(board[start.x][i] == color){
                 return true;
             }
@@ -176,7 +177,8 @@ struct Game {
         pair<Position, Position> p = sort_top_to_bottom_row(p1, p2);
         Position start = p.first;
         Position end = p.second;
-        for(int i=start.x; i<=end.x; i++){
+        for(int i=start.x+1; i<end.x; i++){
+            // if(i == start.x) continue;
             if(board[i][start.y] == color){
                 return true;
             }
@@ -188,7 +190,8 @@ struct Game {
         pair<Position, Position> p = sort_left_to_right_col(p1, p2);
         Position start = p.first;
         Position end = p.second;
-        for(int i=0;i<=abs(start.x-end.x);i++){
+        for(int i=1;i<abs(start.x-end.x);i++){
+            // if(i == 0) continue;
             if(board[start.x - i][start.y + i] == color){
                 return true;
             }
@@ -200,7 +203,8 @@ struct Game {
         pair<Position, Position> p = sort_left_to_right_col(p1, p2);
         Position start = p.first;
         Position end = p.second;
-        for(int i=0;i<=abs(start.x-end.x);i++){
+        for(int i=1;i<abs(start.x-end.x);i++){
+            // if(i == 0) continue;
             if(board[start.x + i][start.y + i] == color){
                 return true;
             }

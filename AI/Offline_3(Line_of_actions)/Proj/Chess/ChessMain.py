@@ -15,8 +15,8 @@ def loadImages():
 	# for piece in pieces:
 	# 	IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
 
-	IMAGES[0] = p.transform.scale(p.image.load("images/black.jpg"), (SQ_SIZE, SQ_SIZE))
-	IMAGES[1] = p.transform.scale(p.image.load("images/white.jpg"), (SQ_SIZE, SQ_SIZE))
+	IMAGES[0] = p.transform.scale(p.image.load("images/bp.png"), (SQ_SIZE, SQ_SIZE))
+	IMAGES[1] = p.transform.scale(p.image.load("images/wp.png"), (SQ_SIZE, SQ_SIZE))
 
 
 # The main driver for oue code. This will handle user input and updating the graphics
@@ -31,9 +31,12 @@ def main():
 	running = True
 	sqSeleceted = () # will keep track of the last click of the user (row, col)
 	playerClicks = [] # keep track of the player clicks (e.g. [(6, 4), (4, 4)]
-
+	print(gs.row_total)
+	print(gs.col_total)
+	print(gs.diag_rl_total)
+	print(gs.diag_lr_total)
 	my_turn = True
-
+	validMoves = []
 	while running:
 		if my_turn:
 			for e in p.event.get():
@@ -52,6 +55,19 @@ def main():
 					else:
 						sqSeleceted = (row, col)
 						playerClicks.append(sqSeleceted) #append first and second clicks
+						if len(playerClicks) == 1 and gs.board[row][col] != 2:
+							color = gs.board[row][col]
+							print("row col color:", row, col, color)
+							validMoves = gs.generate_all_moves((row,col), color)
+							for i in gs.board:
+								for j in i:
+									print(j, end=' ')
+								print()
+							print(gs.row_total)
+							print(gs.col_total)
+							print(gs.diag_rl_total)
+							print(gs.diag_lr_total)
+							print(validMoves)
 					if len(playerClicks) == 2:
 						move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
 						print(move.getChessNotation())
@@ -60,12 +76,6 @@ def main():
 						f = open("in", "w")
 						for i in range(DIMENSION):
 							for j in range(DIMENSION):
-								# if gs.board[i][j] == 0:
-								# 	f.write('0 ')
-								# elif gs.board[i][j] == 1:
-								# 	f.write('1 ')
-								# else:
-								# 	f.write('2 ')
 								f.write(str(gs.board[i][j]) + ' ')
 							f.write('\n')
 						f.write(str(playerClicks[0][0]) + ' ' + str(playerClicks[0][1]) + '\n' + str(playerClicks[1][0]) + ' ' + str(playerClicks[1][1]))
@@ -95,7 +105,7 @@ def main():
 
 
 
-		drawGameState(screen, gs)
+		drawGameState(screen, gs, validMoves, sqSeleceted)
 		clock.tick(MAX_FPS)
 		p.display.flip()
 
@@ -110,8 +120,8 @@ def highlighSquare(screen, gs, validMoves, sqSelected):
 
 			s.fill(p.Color('yellow'))
 			for move in validMoves:
-				if move.startRow == r and move.startCol == c:
-					screen.blit(s, (SQ_SIZE * move.endCol, SQ_SIZE * move.endRow))
+				# if move.startRow == r and move.startCol == c:
+				screen.blit(s, (SQ_SIZE * move[1], SQ_SIZE * move[0]))
 
 
 # Draw the squares on the board
@@ -133,11 +143,10 @@ def drawPieces(screen, board):
 
 
 # Responsible for all graphics within a current game state
-def drawGameState(screen, gs):
+def drawGameState(screen, gs, validMoves, sqSelected):
 	drawBoard(screen)
-	# add piece highilighting and move suggestion later
 	drawPieces(screen, gs.board)
-
+	highlighSquare(screen, gs, validMoves, sqSelected)
 
 if __name__ == "__main__":
 	main()

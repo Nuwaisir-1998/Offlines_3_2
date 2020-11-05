@@ -15,50 +15,24 @@ class GameState():
             [2, 1, 1, 1, 1, 1, 1, 2]]
         self.whiteToMove = True
         self.moveLog = []
-        self.init_totals()
-        self.color_to_id = {0: 0, 1: 1, 2: 2}
-        self.id_to_color = {0: 0, 1: 1, 2: 2}
         self.dimension = 8
+        self.init_totals()
+
 
     def init_totals(self):
-        dim = len(self.board)
-        for i in range(len(self.board)):
-            for j in range(len(self.board[i])):
-                if self.board[i][j] == 0:
+        dim = self.dimension
+        self.row_total = [0 for _ in self.row_total]
+        self.col_total = [0 for _ in self.col_total]
+        self.diag_rl_total = [0 for _ in self.diag_rl_total]
+        self.diag_lr_total = [0 for _ in self.diag_lr_total]
+        for i in range(dim):
+            for j in range(dim):
+                if self.board[i][j] != 2:
                     self.row_total[i] += 1
                     self.col_total[j] += 1
                     self.diag_rl_total[i + j] += 1
                     self.diag_lr_total[i - j + dim - 1] += 1
 
-    # def generate_valid_moves(self, startSq):
-    #     r = startSq[0]
-    #     c = startSq[1]
-    #     color = self.board[r][c]
-    #     if color == 0:
-    #         opposite_color = 1
-    #     else:
-    #         opposite_color = 0
-    #
-    #     valid_moves = []
-    #     # check right
-    #     cnt = self.row_total[r]
-    #     possible = True
-    #     for i in range(c, c + cnt + 1):
-    #         if self.board[r][c] == opposite_color:
-    #             possible = False
-    #             break
-    #     if possible:
-    #         valid_moves.append((r, c + cnt))
-    #
-    #     # check left
-    #     cnt = self.row_total[r]
-    #     possible = True
-    #     for i in range(c, c + cnt + 1):
-    #         if self.board[r][c] == opposite_color:
-    #             possible = False
-    #             break
-    #     if possible:
-    #         valid_moves.append((r, c + cnt))
 
     def sort_left_to_right_col(self, p1, p2):
         if p1[1] < p2[1]:
@@ -83,8 +57,8 @@ class GameState():
         p = self.sort_left_to_right_col(p1, p2)
         start = p[0]
         end = p[1]
-        for i in range(start[1], end[1] + 1):
-            if self.board[start[0][i]] == color:
+        for i in range(start[1]+1, end[1]):
+            if self.board[start[0]][i] == color:
                 return True
         return False
 
@@ -92,7 +66,7 @@ class GameState():
         p = self.sort_top_to_bottom_row(p1, p2)
         start = p[0]
         end = p[1]
-        for i in range(start[0], end[0] + 1):
+        for i in range(start[0]+1, end[0]):
             if self.board[i][start[1]] == color:
                 return True
         return False
@@ -101,7 +75,7 @@ class GameState():
         p = self.sort_left_to_right_col(p1, p2)
         start = p[0]
         end = p[1]
-        for i in range(0, abs(start[0] - end[0]) + 1):
+        for i in range(1, abs(start[0] - end[0])):
             if self.board[start[0] - i][start[1] + i] == color:
                 return True
         return False
@@ -110,7 +84,7 @@ class GameState():
         p = self.sort_left_to_right_col(p1, p2)
         start = p[0]
         end = p[1]
-        for i in range(0, abs(start[0] - end[0]) + 1):
+        for i in range(1, abs(start[0] - end[0])):
             if self.board[start[0] + i][start[1] + i] == color:
                 return True
         return False
@@ -122,8 +96,7 @@ class GameState():
         c = p[1]
         cnt_c = self.col_total[c]
         if r - cnt_c >= 0 and self.board[r - cnt_c][c] != color:
-            end_p.x = r - cnt_c
-            end_p.y = c
+            end_p = (r - cnt_c, c)
             if self.exists_col(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -134,8 +107,7 @@ class GameState():
         c = p[1]
         cnt_c = self.col_total[c]
         if r + cnt_c < self.dimension and self.board[r + cnt_c][c] != color:
-            end_p.x = r + cnt_c
-            end_p.y = c
+            end_p = (r + cnt_c, c)
             if self.exists_col(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -144,10 +116,9 @@ class GameState():
         end_p = (-1, -1)
         r = p[0]
         c = p[1]
-        cnt_r = self.row_total[c]
+        cnt_r = self.row_total[r]
         if c - cnt_r >= 0 and self.board[r][c - cnt_r] != color:
-            end_p.x = r
-            end_p.y = c - cnt_r
+            end_p = (r, c - cnt_r)
             if self.exists_col(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -156,10 +127,9 @@ class GameState():
         end_p = (-1, -1)
         r = p[0]
         c = p[1]
-        cnt_r = self.row_total[c]
+        cnt_r = self.row_total[r]
         if c + cnt_r < self.dimension and self.board[r][c + cnt_r] != color:
-            end_p.x = r
-            end_p.y = c + cnt_r
+            end_p = (r, c + cnt_r)
             if self.exists_col(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -170,8 +140,7 @@ class GameState():
         c = p[1]
         cnt_ul = self.diag_lr_total[r - c + self.dimension - 1]
         if c - cnt_ul >= 0 and r - cnt_ul >= 0 and self.board[r - cnt_ul][c - cnt_ul] != color:
-            end_p.x = r - cnt_ul
-            end_p.y = c - cnt_ul
+            end_p = (r - cnt_ul, c - cnt_ul)
             if self.exists_left_diag(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -182,8 +151,7 @@ class GameState():
         c = p[1]
         cnt_ul = self.diag_lr_total[r - c + self.dimension - 1]
         if c + cnt_ul < self.dimension and r + cnt_ul < self.dimension and self.board[r + cnt_ul][c + cnt_ul] != color:
-            end_p.x = r + cnt_ul
-            end_p.y = c + cnt_ul
+            end_p = (r + cnt_ul, c + cnt_ul)
             if self.exists_left_diag(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -194,8 +162,7 @@ class GameState():
         c = p[1]
         cnt = self.diag_rl_total[r + c]
         if c + cnt < self.dimension and r - cnt >= 0 and self.board[r - cnt][c + cnt] != color:
-            end_p.x = r - cnt
-            end_p.y = c + cnt
+            end_p = (r - cnt, c + cnt)
             if self.exists_right_diag(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -206,8 +173,7 @@ class GameState():
         c = p[1]
         cnt = self.diag_rl_total[r + c]
         if c - cnt >= 0 and r + cnt < self.dimension and self.board[r + cnt][c - cnt] != color:
-            end_p.x = r + cnt
-            end_p.y = c - cnt
+            end_p = (r + cnt, c - cnt)
             if self.exists_right_diag(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
@@ -216,7 +182,6 @@ class GameState():
 
     def generate_all_moves(self, p, color):
         moves = []
-
         p_end = self.move_up(p, color)
         if p_end[0] != -1:
             moves.append(p_end)
@@ -259,6 +224,8 @@ class GameState():
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move) # log the move, so we can undo it later
         self.whiteToMove = not self.whiteToMove #swap players
+
+        self.init_totals()
 
     def undoMove(self):
         if len(self.moveLog) != 0:
