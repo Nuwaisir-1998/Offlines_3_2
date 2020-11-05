@@ -11,24 +11,15 @@ IMAGES = {}
 # Initialize a global dictionary of images. This will be called exactly in the main
 
 def loadImages():
-	pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
-	for piece in pieces:
-		IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
+	# pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
+	# for piece in pieces:
+	# 	IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
+
+	IMAGES[0] = p.transform.scale(p.image.load("images/black.jpg"), (SQ_SIZE, SQ_SIZE))
+	IMAGES[1] = p.transform.scale(p.image.load("images/white.jpg"), (SQ_SIZE, SQ_SIZE))
 
 
 # The main driver for oue code. This will handle user input and updating the graphics
-
-def change_board_notation(board):
-	new_board = board
-	for i in range(DIMENSION):
-		for j in range(DIMENSION):
-			if board[i][j] == 'bp':
-				new_board[i][j] = '0'
-			elif board[i][j] == 'wp':
-				new_board[i][j] = '1'
-			else:
-				new_board[i][j] = '2'
-	return new_board
 
 def main():
 	p.init()
@@ -69,12 +60,13 @@ def main():
 						f = open("in", "w")
 						for i in range(DIMENSION):
 							for j in range(DIMENSION):
-								if gs.board[i][j] == 'bp':
-									f.write('0 ')
-								elif gs.board[i][j] == 'wp':
-									f.write('1 ')
-								else:
-									f.write('2 ')
+								# if gs.board[i][j] == 0:
+								# 	f.write('0 ')
+								# elif gs.board[i][j] == 1:
+								# 	f.write('1 ')
+								# else:
+								# 	f.write('2 ')
+								f.write(str(gs.board[i][j]) + ' ')
 							f.write('\n')
 						f.write(str(playerClicks[0][0]) + ' ' + str(playerClicks[0][1]) + '\n' + str(playerClicks[1][0]) + ' ' + str(playerClicks[1][1]))
 						f.close()
@@ -110,7 +102,7 @@ def main():
 def highlighSquare(screen, gs, validMoves, sqSelected):
 	if sqSelected != ():
 		r, c = sqSelected
-		if gs.board[r][c][0] == ('w' if gs.whiteToMove else 'b'):
+		if gs.board[r][c] == (1 if gs.whiteToMove else 0):
 			s = p.Surface((SQ_SIZE, SQ_SIZE))
 			s.set_alpha(100)
 			s.fill(p.Color('blue'))
@@ -136,7 +128,7 @@ def drawPieces(screen, board):
 	for r in range(DIMENSION):
 		for c in range(DIMENSION):
 			piece = board[r][c]
-			if piece != "--":
+			if piece != 2:
 				screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 
