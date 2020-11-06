@@ -122,6 +122,10 @@ public class Router implements Serializable {
         }
         for(RoutingTableEntry rte : routingTable){
             int to = rte.getRouterId();
+            if(to == neighbor.getRouterId() && !neighbor.getState()){
+                rte.setDistance(Constants.INFINITY);
+                rte.setGatewayRouterId(routerId);
+            }
             if(dist.get(to) + 1.0 < rte.getDistance()){
                 ret = true;
                 rte.setDistance(1.0 + dist.get(to));

@@ -1,15 +1,14 @@
 import sun.nio.cs.ext.MacArabic;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import java.io.File;  // Import the File class
+import java.io.IOException;  // Import the IOException class to handle errors
 //Work needed
 public class NetworkLayerServer {
 
@@ -23,7 +22,7 @@ public class NetworkLayerServer {
     static Map<IPAddress, Integer> interfacetoRouterID = new HashMap<>();
     static Map<Integer, Router> routerMap = new HashMap<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         //Task: Maintain an active client list
 
@@ -52,7 +51,32 @@ public class NetworkLayerServer {
 
 
 
-        DVR(7); //Update routing table using distance vector routing until convergence
+        simpleDVR(7); //Update routing table using distance vector routing until convergence
+
+
+
+        BufferedWriter myWriter = new BufferedWriter(new FileWriter("filename.txt", false));
+        for(Router r : routers){
+            myWriter.write(r.getRouterId() + " is " + r.getState() + "\n");
+        }
+        for(Router r : routers){
+            myWriter.write("Router ID: " + r.getRouterId());
+            myWriter.newLine();
+            System.out.println("Dfsfs : " + r.getRouterId());
+            for(RoutingTableEntry rte : r.getRoutingTable()){
+                System.out.println(rte.getRouterId() + " " + rte.getDistance() + " " + rte.getGatewayRouterId());
+                myWriter.write(rte.getRouterId() + " " + rte.getDistance() + " " + rte.getGatewayRouterId());
+                myWriter.newLine();
+            }
+        }
+        myWriter.close();
+
+
+
+        System.out.println("simpleDVR starting from 15");
+        for(Router r : routers){
+            r.printRoutingTable();
+        }
 //        simpleDVR(1);
         // printing initial state of each router
         for(Router router : routers) System.out.println("Router " + router.getRouterId() + " is " + router.getState());
@@ -60,8 +84,14 @@ public class NetworkLayerServer {
 
         while(true) {
             try {
+
+//                for(int i=0;i<15;i++){
+//                    add_end_device();
+//                }
+
                 Socket socket = serverSocket.accept();
                 System.out.println("Client" + (clientCount + 1) + " attempted to connect");
+//                System.out.println("db: " + clientInterfaces.size());
                 EndDevice endDevice = getClientDeviceSetup();
                 clientCount++;
 //                System.out.println("Client count : " + clientCount);
@@ -73,6 +103,17 @@ public class NetworkLayerServer {
                 Logger.getLogger(NetworkLayerServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public static void add_end_device(){
+//        System.out.println("db2: " + clientInterfaces.size());
+        EndDevice endDevice = getClientDeviceSetup();
+        clientCount++;
+//                System.out.println("Client count : " + clientCount);
+        endDevices.add(endDevice);
+        System.out.println("end device ip : " + endDevice.getIpAddress());
+        endDeviceMap.put(endDevice.getIpAddress(),endDevice);
+        clientCount++;
     }
 
     public static void initRoutingTables() {
@@ -101,26 +142,16 @@ public class NetworkLayerServer {
         */
 
         Router startingRouter = routerMap.get(startingRouterId);
-        if(!startingRouter.getState()) {
-            System.out.println("Can't start DVR from " + startingRouterId + " as it is DOWN.");
-            return;
-        }
+//        if(!startingRouter.getState()) {
+//            System.out.println("Can't start DVR from " + startingRouterId + " as it is DOWN.");
+//            return;
+//        }
         int convergence = 0;
-
-//        routerMap.get(4).setState(false);
-//        routerMap.get(1).setState(false);
-//        routerMap.get(2).setState(true);
-//        routerMap.get(7).setState(true);
-//        routerMap.get(3).setState(true);
 
         // lock statechanger
         RouterStateChanger.islocked = true;
-//        RouterStateChanger.msg = false;
-//        for(Router r : routers){
-//            System.out.println(r.getRouterId() + " is " + r.getState());
-//        }
+
         // swapping startingRouterId th router with 0th router.
-        System.out.println(RouterStateChanger.msg);
         while(true) {
             for (int i = 0; i < routers.size(); i++) {
                 if (routers.get(i).getRouterId() == startingRouterId) {
@@ -130,9 +161,7 @@ public class NetworkLayerServer {
                     break;
                 }
             }
-//        for(Router r : routers){
-//            System.out.println(r.getRouterId());
-//        }
+
             convergence = 0;
             for (Router r : routers) {
                 if(!r.getState()) continue;
@@ -143,12 +172,11 @@ public class NetworkLayerServer {
                 for (Integer i : all_neighbors) {
                     Router neighbor = routerMap.get(i);
                     if (neighbor.getState()) {
-//                        System.out.println(neighbor.getRouterId() + " updated by " + r.getRouterId());
                         convergence += neighbor.sfupdateRoutingTable(r) ? 1 : 0;
                     }
                 }
             }
-            System.out.println(convergence);
+//            System.out.println("convergence: " + convergence);
             if(convergence == 0) break;
         }
 
@@ -167,7 +195,57 @@ public class NetworkLayerServer {
     }
 
     public static synchronized void simpleDVR(int startingRouterId) {
+//        Router startingRouter = routerMap.get(startingRouterId);
+//        if(!startingRouter.getState()) {
+//            System.out.println("Can't start simpleDVR from " + startingRouterId + " as it is DOWN.");
+//            return;
+//        }
+        int convergence = 0;
 
+
+        // lock statechanger
+        RouterStateChanger.islocked = true;
+
+        // swapping startingRouterId th router with 0th router.
+        while(true) {
+            for (int i = 0; i < routers.size(); i++) {
+                if (routers.get(i).getRouterId() == startingRouterId) {
+                    Router temp = routers.get(0);
+                    routers.set(0, routers.get(i));
+                    routers.set(i, temp);
+                    break;
+                }
+            }
+
+            convergence = 0;
+            for (Router r : routers) {
+                if(!r.getState()) continue;
+                ArrayList<RoutingTableEntry> T = r.getRoutingTable();
+                ArrayList<Integer> all_neighbors = r.getNeighborRouterIDs();
+                ArrayList<Integer> all_active_neighbors = new ArrayList<>();
+
+                for (Integer i : all_neighbors) {
+                    Router neighbor = routerMap.get(i);
+                    if (neighbor.getState()) {
+                        convergence += neighbor.updateRoutingTable(r) ? 1 : 0;
+                    }
+                }
+            }
+            System.out.println(convergence);
+            if(convergence == 0) break;
+        }
+
+        System.out.println("simpleDVR ended");
+        // unlock statechanger
+        RouterStateChanger.islocked = false;
+//        synchronized (RouterStateChanger.msg) {
+//            RouterStateChanger.msg.notify();
+//            System.out.println("unlocked : " + msg);
+//        }
+//        for(Router router : routers){
+//            System.out.println("-------------------------");
+//            router.printRoutingTable();
+//        }
 
     }
 

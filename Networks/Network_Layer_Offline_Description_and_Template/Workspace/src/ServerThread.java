@@ -39,14 +39,14 @@ public class ServerThread implements Runnable {
 
         while(true) {
             Packet packet = (Packet) networkUtility.read();
-            System.out.println(packet.getMessage() + "," + packet.getSpecialMessage());
+//            System.out.println(packet.getMessage() + "," + packet.getSpecialMessage());
             if(packet.getMessage().equals("exit")) break;
             boolean sent = deliverPacket(packet);
             if (packet.getSpecialMessage().equals("SHOW_ROUTE")) {
-                System.out.println("show route");
+//                System.out.println("show route");
                 Packet status;
                 if(sent){
-                    System.out.println("successful");
+//                    System.out.println("successful");
                     status = new Packet("Packet sent successfully", "", packet.getDestinationIP(), packet.getSourceIP());
 //                    send_to_client.setRouting_path(routing_path);
                     networkUtility.write(status);
@@ -64,6 +64,7 @@ public class ServerThread implements Runnable {
                     acknowledgement_msg = "Packet sent successfully";
                 } else acknowledgement_msg = "Packet Dropped";
                 Packet send_to_client = new Packet(acknowledgement_msg, "", packet.getDestinationIP(), packet.getSourceIP());
+                send_to_client.setHopcount(routing_path.size() - 1);
                 networkUtility.write(send_to_client);
             }
         }
@@ -128,7 +129,7 @@ public class ServerThread implements Runnable {
         }
         System.out.println("Router " + s.getRouterId() + " to " + d.getRouterId());
         if(!s.getState()){
-            System.out.println("source router " + s.getRouterId() + " is down.");
+//            System.out.println("source router " + s.getRouterId() + " is down.");
             return false;
         }
         Router current_router = s;
@@ -139,7 +140,13 @@ public class ServerThread implements Runnable {
 //            System.out.println(r.getRouterId() + " is " + r.getState());
 //        }
         boolean drop = false;
+        int lim = Constants.INFINITY;
         while(current_router.getRouterId() != d.getRouterId()){
+//            System.out.println("Loop running");
+
+            if(routing_path.size() >= lim) {
+                return false;
+            }
             ArrayList<RoutingTableEntry> routing_table = current_router.getRoutingTable();
 
             /*********************     3(a)      **********************/
@@ -148,27 +155,36 @@ public class ServerThread implements Runnable {
             for(RoutingTableEntry rte : routing_table){
                 if(rte.getRouterId() == d.getRouterId()){
                     Router gateway = NetworkLayerServer.routerMap.get(rte.getGatewayRouterId());
-                    System.out.println(current_router.getRouterId() + " -> " + gateway.getRouterId());
-
+                    System.out.println(current_router.getRouterId() + " --> " + gateway.getRouterId());
+                    current_router.printRoutingTable();
+                    gateway.printRoutingTable();
+                    for(Router r : NetworkLayerServer.routers){
+                        System.out.println(r.getRouterId() + " is " + r.getState());
+                    }
                     if(!gateway.getState() || (gateway.getRouterId() == current_router.getRouterId())){
-                        System.out.println("Packet dropped");
+//                        System.out.println("Packet dropped");
                         rte.setDistance(Constants.INFINITY); // check whether its really it.
 //                        RouterStateChanger.islocked = true;
-                        NetworkLayerServer.DVR(current_router.getRouterId());
+                        System.out.println("simple DVR called");
+                        NetworkLayerServer.simpleDVR(current_router.getRouterId());
 //                        RouterStateChanger.islocked = false;
                         drop = true;
                     }else {
+                        System.out.println("else");
+                        Router prev = current_router;
                         current_router = gateway;
+
                         routing_path.add(current_router);
 //                        routing_path_ips += "," + current_router.getInterfaceAddresses().get(0).getString();
                         /*********************     3(b)      **********************/
                         ArrayList<RoutingTableEntry> gateway_routing_table =  gateway.getRoutingTable();
                         for(RoutingTableEntry rte_g : gateway_routing_table){
-                            if(rte_g.getRouterId() == current_router.getRouterId()){
+                            if(rte_g.getRouterId() == prev.getRouterId()){
                                 if(rte_g.getDistance() == Constants.INFINITY){
                                     rte_g.setDistance(1);
 //                                    RouterStateChanger.islocked = true;
-                                    NetworkLayerServer.DVR(gateway.getRouterId());
+                                    System.out.println("simple DVR called inside else");
+                                    NetworkLayerServer.simpleDVR(gateway.getRouterId());
 //                                    RouterStateChanger.islocked = false;
                                 }
                                 break;
@@ -179,8 +195,7 @@ public class ServerThread implements Runnable {
                 }
             }
             if(drop) break;
-            System.out.println("visiting " + current_router.getRouterId());
-//            if(lim == 0) break;
+//            System.out.println("visiting " + current_router.getRouterId());
         }
 
         return !drop;

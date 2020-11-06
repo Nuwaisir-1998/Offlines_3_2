@@ -50,4 +50,12 @@ public class Packet implements Serializable {
     public void setDestinationIP(IPAddress destinationIP) {
         this.destinationIP = destinationIP;
     }
+
+    public int getHopcount() {
+        return hopcount;
+    }
+
+    public void setHopcount(int hopcount) {
+        this.hopcount = hopcount;
+    }
 }

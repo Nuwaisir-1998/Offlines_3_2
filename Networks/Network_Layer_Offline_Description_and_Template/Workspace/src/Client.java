@@ -50,9 +50,13 @@ public class Client {
 //        Scanner sc = new Scanner(System.in);
 //        int to = sc.nextInt();
         Random random = new Random(System.currentTimeMillis());
-        for(int i=0;i<1000;i++){
+
+        int total_dropped = 0;
+        int total_hop_count = 0;
+
+        for(int i=0;i<100;i++){
             int rnd = Math.abs(random.nextInt(endDevices.size()));
-            System.out.println(endDevice.getDeviceID() + " sending packet to " + endDevices.get(rnd).getDeviceID());
+            System.out.println("End device " + endDevice.getDeviceID() + " sending packet to " + endDevices.get(rnd).getDeviceID());
             Packet packet = new Packet("I am client " + endDevice.getDeviceID(), "", endDevice.getIpAddress(), endDevices.get(rnd).getIpAddress());
             if(i == 20){
 //                System.out.println(i);
@@ -63,12 +67,14 @@ public class Client {
 //                System.out.println(from_server.getMessage());
                 if(status.getMessage().equals("Packet Dropped")) {
                     System.out.println(" dropped ");
+                    total_dropped++;
 
                 }else{
                     ArrayList<Router> routing_path = (ArrayList<Router>) networkUtility.read();
                     if(routing_path == null) System.out.println("null routing path");
                     else {
                         int hop_count = routing_path.size() - 1;
+                        total_hop_count += hop_count;
                         System.out.println("Hop count : " + hop_count);
                         System.out.println("Routing Path");
                         for (Router r : routing_path) {
@@ -84,7 +90,10 @@ public class Client {
             }else{
                 networkUtility.write(packet);
                 Packet from_server = (Packet)networkUtility.read();
-                System.out.println(from_server.getMessage());
+                System.out.println(from_server.getMessage() + ", Hop count : " + from_server.getHopcount());
+                if(from_server.getMessage().equals("Packet Dropped")){
+                    total_dropped++;
+                }else total_hop_count += from_server.getHopcount();
             }
         }
 //        System.out.println("Turn me off? Any key: YES");
@@ -94,6 +103,10 @@ public class Client {
         Packet exit_packet = new Packet("exit", "", new IPAddress("0.0.0.0"), new IPAddress("0.0.0.0"));
         networkUtility.write(exit_packet);
 
+        System.out.println("Avg hop count : " + total_hop_count / 100.0);
+        System.out.println("Avg packet drops : " + total_dropped / 100.0);
+
+        Thread.sleep(300000);
 
     }
 }
