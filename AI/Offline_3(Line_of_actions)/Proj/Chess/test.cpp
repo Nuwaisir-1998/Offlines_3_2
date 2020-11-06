@@ -377,6 +377,57 @@ struct Game {
         init(board);
     }
 
+
+    int bfs(Position s){
+        vector<int> dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        vector<int> dy = {0, -1, -1, -1, 0, 1, 1, 1};
+        pair<int,int> s_new = {s.x, s.y};
+        map<pair<int, int>, bool> vis;
+        queue<pair<int,int>> q;
+        q.push(s_new);
+        vis[s_new] = true;
+        int cnt = 1; // component_size
+        while(!q.empty()){
+            pair<int,int> u = q.front();
+            q.pop();
+            int r = u.ff;
+            int c = u.ss;
+            for(int i=0;i<8;i++){
+                pair<int,int> to = {r + dx[i], c + dy[i]};
+                if(r + dx[i] < dimension and r + dx[i] >= 0 and c + dy[i] >= 0 and c + dy[i] < dimension){
+                    if((vis.find(to) == vis.end()) && (board[r][c] == board[r + dx[i]][c + dy[i]])){
+                        q.push(to);
+                        vis[to] = true;
+                        cnt++;
+                    }
+                }
+            }
+        }
+        return cnt;
+    }
+
+    int count_pieces(int color){
+        int cnt = 0;
+        for(int i=0;i<dimension;i++){
+            for(int j=0;j<dimension;j++){
+                if(board[i][j] == color) cnt++;
+            }
+        }
+        return cnt;
+    }
+
+    bool is_white_winner(){
+        int white_cnt = count_pieces(W);
+        Position pos_w = pos_color[W][0];
+        return (white_cnt == bfs(pos_w));
+    }
+
+    bool is_black_winner(){
+        int black_cnt = count_pieces(B);
+        Position pos_b = pos_color[B][0];
+        return (black_cnt == bfs(pos_b));
+    }
+
     /***************************** Heuristics ********************************/
     
     int heuristic_piece_square_table(int color){
@@ -393,7 +444,7 @@ struct Game {
 
     /************************************** get, set **********************************************/
 
-    char get(int i, int j) {
+    int get(int i, int j) {
         return board[i][j];
     }
 
@@ -565,11 +616,11 @@ void solve(ll cs){
     vector<vector<int>> board = {
         {2, 1, 1, 1, 1, 1, 1, 2},
         {0, 2, 2, 2, 2, 2, 2, 0},
-        {0, 2, 2, 2, 2, 2, 2, 0},
-        {0, 2, 2, 2, 2, 2, 2, 0},
-        {0, 2, 2, 2, 2, 2, 2, 0},
-        {0, 2, 2, 2, 2, 2, 2, 0},
-        {0, 2, 2, 2, 2, 2, 2, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
         {2, 1, 1, 1, 1, 1, 1, 2}
     };
     // int start_y, start_x, end_x, end_y;
@@ -581,6 +632,8 @@ void solve(ll cs){
     // Position p1(start_x, start_y);
     // Position p2(end_x, end_y);
     Game b(board);
+
+    cout << b.is_white_winner() << endl;
     
     // b.make_move(p1, p2);
     Position p1(6, 2);

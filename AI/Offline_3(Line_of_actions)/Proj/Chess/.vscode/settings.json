@@ -9,6 +9,7 @@
         "iomanip": "cpp",
         "numeric": "cpp",
         "ostream": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "fstream": "cpp"
     }
 }

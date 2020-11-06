@@ -7,6 +7,7 @@
 using namespace std;
 using namespace __gnu_pbds;
 using namespace __gnu_cxx;
+using namespace std::chrono;
 
 #define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
 
@@ -368,6 +369,56 @@ struct Game {
         init(board);
     }
 
+    int count_pieces(int color){
+        int cnt = 0;
+        for(int i=0;i<dimension;i++){
+            for(int j=0;j<dimension;j++){
+                if(board[i][j] == color) cnt++;
+            }
+        }
+        return cnt;
+    }
+
+    int bfs(Position s){
+        vector<int> dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        vector<int> dy = {0, -1, -1, -1, 0, 1, 1, 1};
+        pair<int,int> s_new = {s.x, s.y};
+        map<pair<int, int>, bool> vis;
+        queue<pair<int,int>> q;
+        q.push(s_new);
+        vis[s_new] = true;
+        int cnt = 1; // component_size
+        while(!q.empty()){
+            pair<int,int> u = q.front();
+            q.pop();
+            int r = u.ff;
+            int c = u.ss;
+            for(int i=0;i<8;i++){
+                pair<int,int> to = {r + dx[i], c + dy[i]};
+                if(r + dx[i] < dimension and r + dx[i] >= 0 and c + dy[i] >= 0 and c + dy[i] < dimension){
+                    if((vis.find(to) == vis.end()) && (board[r][c] == board[r + dx[i]][c + dy[i]])){
+                        q.push(to);
+                        vis[to] = true;
+                        cnt++;
+                    }
+                }
+            }
+        }
+        return cnt;
+    }
+
+    bool is_white_winner(){
+        int white_cnt = count_pieces(W);
+        Position pos_w = pos_color[W][0];
+        return (white_cnt == bfs(pos_w));
+    }
+
+    bool is_black_winner(){
+        int black_cnt = count_pieces(B);
+        Position pos_b = pos_color[B][0];
+        return (black_cnt == bfs(pos_b));
+    }
+
     /***************************** Heuristics ********************************/
     
     int heuristic_piece_square_table(int color){
@@ -384,7 +435,7 @@ struct Game {
 
     /************************************** get, set **********************************************/
 
-    char get(int i, int j) {
+    int get(int i, int j) {
         return board[i][j];
     }
 
@@ -534,10 +585,6 @@ struct Game {
     }
 };
 
-struct Lines_of_action{
-
-
-};
 
 
 void solve(ll cs){
@@ -568,11 +615,23 @@ void solve(ll cs){
     std::ofstream ofs ("check_moves", std::ofstream::out);
     ofs << start_x << " " << start_y << endl;
     ofs << end_x << " " << end_y << endl;
-    ofs.close();
+    
+
+    auto start = high_resolution_clock::now(); 
 
     Position p1(start_x, start_y);
     Position p2(end_x, end_y);
+
+    Position p_win(9, 0);
+    Position p_win2(0, 9);
+
     Game b(board);
+
+    if(b.is_white_winner()){
+        cout << 9 << " " << 0 << endl;
+        cout << 9 << " " << 0 << endl;
+        return;
+    }
     // b.make_move(p1, p2);
     
     b.backtrack(b, 4, B, true, -INF, INF);
@@ -580,9 +639,19 @@ void solve(ll cs){
     // b.make_move(b.get_best_move().first, b.get_best_move().second);
     b.print_best_move();
     b.make_move(b.get_best_move().first, b.get_best_move().second);
+
+    if(b.is_black_winner()){
+        cout << 0 << " " << 9 << endl;
+        cout << 0 << " " << 9 << endl;
+        return;
+    }
     // b.print_board();
     // b.print();
     // cout << "finished 2 \n";
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    ofs << "Time taken by the code: " << duration.count() / 1e6 << " seconds" << endl;
+    ofs.close();
 }
 
 int main()

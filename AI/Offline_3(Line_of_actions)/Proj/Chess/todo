@@ -1,0 +1,4 @@
+(done)1. dont compile every time
+
+2. try to improve alpha-beta pruning (maybe by samin's idea or think of your own idea)
+3. comment out the ofstream part

@@ -37,6 +37,8 @@ def main():
 	print(gs.diag_lr_total)
 	my_turn = True
 	validMoves = []
+	first_move = True
+	subprocess.run('g++ -O2 main.cpp -o main', shell=True, capture_output=True) #compiling the cpp code
 	while running:
 		if my_turn:
 			for e in p.event.get():
@@ -90,17 +92,21 @@ def main():
 					# 		gs.undoMove()
 		else:
 			my_turn = True
-			out = subprocess.run('sh main.sh', shell=True, capture_output=True)
+			out = subprocess.run('main.exe', shell=True, capture_output=True)
 			val = out.stdout.decode()
 			print(val)
 			start_x = int(val[0])
 			start_y = int(val[2])
 			end_x = int(val[5])
 			end_y = int(val[7])
-
-			move = ChessEngine.Move((start_x, start_y), (end_x, end_y), gs.board)
-			print(move.getChessNotation())
-			gs.makeMove(move)
+			if start_x == 0 and start_y == 9:
+				print('black wins')
+			elif start_x == 9 and start_y == 0:
+				print('white wins')
+			else:
+				move = ChessEngine.Move((start_x, start_y), (end_x, end_y), gs.board)
+				print(move.getChessNotation())
+				gs.makeMove(move)
 
 
 
