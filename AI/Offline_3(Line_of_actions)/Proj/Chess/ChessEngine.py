@@ -1,30 +1,50 @@
 class GameState():
-    def __init__(self):
+    def __init__(self, dim, color):
+        self.dimension = dim
+        self.color = color
         self.row_total = [0, 0, 0, 0, 0, 0, 0, 0]
         self.col_total = [0, 0, 0, 0, 0, 0, 0, 0]
         self.diag_rl_total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.diag_lr_total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.board = [
-            [2, 1, 1, 1, 1, 1, 1, 2],
-            [0, 2, 2, 2, 2, 2, 2, 0],
-            [0, 2, 2, 2, 2, 2, 2, 0],
-            [0, 2, 2, 2, 2, 2, 2, 0],
-            [0, 2, 2, 2, 2, 2, 2, 0],
-            [0, 2, 2, 2, 2, 2, 2, 0],
-            [0, 2, 2, 2, 2, 2, 2, 0],
-            [2, 1, 1, 1, 1, 1, 1, 2]]
+        # self.board = [
+        #     [2, 1, 1, 1, 1, 1, 1, 2],
+        #     [0, 2, 2, 2, 2, 2, 2, 0],
+        #     [0, 2, 2, 2, 2, 2, 2, 0],
+        #     [0, 2, 2, 2, 2, 2, 2, 0],
+        #     [0, 2, 2, 2, 2, 2, 2, 0],
+        #     [0, 2, 2, 2, 2, 2, 2, 0],
+        #     [0, 2, 2, 2, 2, 2, 2, 0],
+        #     [2, 1, 1, 1, 1, 1, 1, 2]]
+        self.create_board()
         self.whiteToMove = True
         self.moveLog = []
-        self.dimension = 8
+
         self.init_totals()
+
+    def create_board(self):
+        self.board = []
+        dim = self.dimension
+        for j in range(dim):
+            row = []
+            for i in range(dim):
+                row.append(2)
+            self.board.append(row)
+
+        for i in range(1, self.dimension-1):
+            self.board[0][i] = self.color
+            self.board[self.dimension-1][i] = self.color
+        for i in range(1, self.dimension-1):
+            self.board[i][0] = abs(1 - self.color)
+            self.board[i][self.dimension-1] = abs(1 - self.color)
+
 
 
     def init_totals(self):
         dim = self.dimension
-        self.row_total = [0 for _ in self.row_total]
-        self.col_total = [0 for _ in self.col_total]
-        self.diag_rl_total = [0 for _ in self.diag_rl_total]
-        self.diag_lr_total = [0 for _ in self.diag_lr_total]
+        self.row_total = [0 for _ in range(self.dimension)]
+        self.col_total = [0 for _ in range(self.dimension)]
+        self.diag_rl_total = [0 for _ in range(2 * self.dimension - 1)]
+        self.diag_lr_total = [0 for _ in range(2 * self.dimension - 1)]
         for i in range(dim):
             for j in range(dim):
                 if self.board[i][j] != 2:

@@ -66,6 +66,8 @@ gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 #define BETA 1
 #define DEPTH 4
 
+
+int TIME_LIMIT = 2;
 int BOTS_COLOR = 0;
 bool time_over = false;
 
@@ -521,11 +523,11 @@ struct Game {
     /****************************** Minimax with alpha beta pruning ************************************/
 
     // sets the next_move
-    int backtrack(Game game, int depth, int color, bool isMax, int alpha, int beta){
+    int backtrack(Game & game, int depth, int color, bool isMax, int alpha, int beta){
         if(time_over) return -INF;
         if(depth == 0){
             // cout << "time_stamp" << (double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC << endl;
-            if((double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC > 2.0){
+            if((double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC > TIME_LIMIT){
                 time_over = true;
                 return -INF;
             }
@@ -653,13 +655,16 @@ struct Game {
 
 void solve(ll cs){
     int i, j, dimension = 8;
-    // cin >> dimension;
+    int bots_color;
+    cin >> dimension >> bots_color;
+    BOTS_COLOR = bots_color;
     vector<vector<int>> board(dimension, vector<int> (dimension));
     for(i=0;i<dimension;i++) {
         for(j=0;j<dimension;j++){
             cin >> board[i][j];
         }
     }
+    if(dimension == 6) TIME_LIMIT = 1;
 
     // vector<vector<int>> board = {
     //     {2, 1, 1, 1, 1, 1, 1, 2},
@@ -677,6 +682,7 @@ void solve(ll cs){
     cin >> end_x >> end_y;
 
     std::ofstream ofs ("check_moves", std::ofstream::out);
+    ofs << "Bots color " << bots_color << endl;
     ofs << start_x << " " << start_y << endl;
     ofs << end_x << " " << end_y << endl;
     
@@ -690,16 +696,23 @@ void solve(ll cs){
     Position p_win2(0, 9);
 
     Game b(board);
-
-    if(b.is_white_winner()){
-        cout << 9 << " " << 0 << endl;
-        cout << 9 << " " << 0 << endl;
-        return;
+    if(bots_color == 0){
+        if(b.is_white_winner()){
+            cout << 9 << " " << 0 << endl;
+            cout << 9 << " " << 0 << endl;
+            return;
+        }
+    }else{
+        if(b.is_black_winner()){
+            cout << 9 << " " << 0 << endl;
+            cout << 9 << " " << 0 << endl;
+            return;
+        }
     }
     // b.make_move(p1, p2);
     pair<Position, Position> from_to;
-    for(int i=1;i<10;i++){
-        b.backtrack(b, i, B, true, -INF, INF);
+    for(int i=1;i<17;i++){
+        b.backtrack(b, i, bots_color, true, -INF, INF);
         // cout << 
         // cout << "time: " << start_t * 1.0 / CLOCKS_PER_SEC << endl;
         if(time_over) {
@@ -714,10 +727,16 @@ void solve(ll cs){
     
 
     b.make_move(from_to.first, from_to.second);
-
-    if(b.is_black_winner()){
-        cout << 0 << " " << 9 << endl;
-        cout << 0 << " " << 9 << endl;
+    if(bots_color == 0){
+        if(b.is_black_winner()){
+            cout << 0 << " " << 9 << endl;
+            cout << 0 << " " << 9 << endl;
+        }
+    }else{
+        if(b.is_white_winner()){
+            cout << 0 << " " << 9 << endl;
+            cout << 0 << " " << 9 << endl;
+        }
     }
     // b.print_best_move();
     cout << from_to.first.x << " " << from_to.first.y << endl;

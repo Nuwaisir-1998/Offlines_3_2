@@ -9,6 +9,17 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 
+COLOR = 1
+
+
+def set_color(value, color):
+	global COLOR
+	COLOR = color
+
+def set_dimension(value, dim):
+	global DIMENSION
+	DIMENSION = dim
+
 
 # Initialize a global dictionary of images. This will be called exactly in the main
 
@@ -23,7 +34,7 @@ def loadImages():
 def highlighSquare(screen, gs, validMoves, sqSelected):
 	if sqSelected != ():
 		r, c = sqSelected
-		if gs.board[r][c] == (1 if gs.whiteToMove else 0):
+		if gs.board[r][c] == (COLOR if gs.whiteToMove else abs(1 - COLOR)):
 			s = p.Surface((SQ_SIZE, SQ_SIZE))
 			s.set_alpha(100)
 			s.fill(p.Color('blue'))
@@ -43,7 +54,7 @@ def main():
 	screen = p.display.set_mode((WIDTH, HEIGHT))
 	clock = p.time.Clock()
 	screen.fill(p.Color("white"))
-	gs = ChessEngine.GameState()
+	gs = ChessEngine.GameState(DIMENSION, COLOR)
 	loadImages()
 	running = True
 	sqSeleceted = ()  # will keep track of the last click of the user (row, col)
@@ -100,6 +111,7 @@ def main():
 							gs.makeMove(move)
 							# new_board = change_board_notation(gs.board)
 							f = open("in", "w")
+							f.write(str(DIMENSION) + ' ' + str(abs(1 - COLOR)) + '\n')
 							for i in range(DIMENSION):
 								for j in range(DIMENSION):
 									f.write(str(gs.board[i][j]) + ' ')
@@ -132,14 +144,15 @@ def main():
 				move = ChessEngine.Move((start_x, start_y), (end_x, end_y), gs.board)
 				print(move.getChessNotation())
 				gs.makeMove(move)
-				print('black wins')
+				print('bot wins')
 			elif start_x == 9 and start_y == 0:
-				print('white wins')
+				print('you win')
 			else:
 				move = ChessEngine.Move((start_x, start_y), (end_x, end_y), gs.board)
 				print(move.getChessNotation())
 				gs.makeMove(move)
 
+		highlighSquare(screen, gs, [(2, 0)], (0, 2))
 		drawGameState(screen, gs, validMoves, sqSeleceted)
 		clock.tick(MAX_FPS)
 		p.display.flip()
@@ -176,17 +189,19 @@ def dummy():
 	pass
 
 
-if __name__ == "__main__":
-	main()
+# if __name__ == "__main__":
+# 	main()
 
 
-# p.init()
-# surface = p.display.set_mode((600, 400))
-# menu = pygame_menu.Menu(300, 400, 'Welcome', theme=pygame_menu.themes.THEME_BLUE)
-#
-# menu.add_text_input('Name :', default='Unnamed')
-# # menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
-# menu.add_button('Play', main)
-# menu.add_button('Quit', pygame_menu.events.EXIT)
-# menu.mainloop(surface)
+p.init()
+surface = p.display.set_mode((600, 400))
+menu = pygame_menu.Menu(400, 600, 'Welcome', theme=pygame_menu.themes.THEME_BLUE)
+
+menu.add_text_input('Name :', default='Unnamed')
+menu.add_selector('Color :', [('White', 1), ('Black', 0)], onchange=set_color)
+menu.add_selector('Board Size :', [('8X8', 8), ('6X6', 6)], onchange=set_dimension)
+menu.add_button('Play', main)
+menu.add_button('Quit', pygame_menu.events.EXIT)
+
+menu.mainloop(surface)
 
