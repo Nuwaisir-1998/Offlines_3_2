@@ -7,6 +7,7 @@
 using namespace std;
 using namespace __gnu_pbds;
 using namespace __gnu_cxx;
+using namespace std::chrono;
 
 #define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
 
@@ -14,6 +15,7 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef vector<ll> vll;
 typedef pair<ll, ll> pll;
+typedef pair<int, int> pii;
 typedef vector<pll> vpll;
 
 #define all(x) (x).begin(), (x).end()
@@ -62,6 +64,8 @@ gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 #define SOMETHING 0
 #define ALPHA 0
 #define BETA 1
+
+int BOTS_COLOR = 0;
 
 struct Position {
     int x, y;
@@ -297,9 +301,9 @@ struct Game {
             end_p.x = r + cnt_ul;
             end_p.y = c + cnt_ul;
             if(exists_left_diag(abs(1 - color), p, end_p)){
-                cout << "hoom" << endl;
-                p.print();
-                end_p.print();
+                // cout << "hoom" << endl;
+                // p.print();
+                // end_p.print();
                 return {-1, -1};
             }
         }
@@ -354,8 +358,8 @@ struct Game {
         if(p_end.x != -1) moves.push_back(p_end);
 
         p_end = move_up_left(p, color);
-        cout << "fr : " << p.x << " " << p.y << endl;
-        cout << "dr : " << p_end.x << " " << p_end.y << endl;
+        // cout << "fr : " << p.x << " " << p.y << endl;
+        // cout << "dr : " << p_end.x << " " << p_end.y << endl;
         if(p_end.x != -1) moves.push_back(p_end);
 
         p_end = move_up_right(p, color);
@@ -392,10 +396,12 @@ struct Game {
             q.pop();
             int r = u.ff;
             int c = u.ss;
+            cout << r << " -- " << c << endl;
             for(int i=0;i<8;i++){
                 pair<int,int> to = {r + dx[i], c + dy[i]};
                 if(r + dx[i] < dimension and r + dx[i] >= 0 and c + dy[i] >= 0 and c + dy[i] < dimension){
                     if((vis.find(to) == vis.end()) && (board[r][c] == board[r + dx[i]][c + dy[i]])){
+                        cout << "-" << to.ff << " " << to.ss << endl;
                         q.push(to);
                         vis[to] = true;
                         cnt++;
@@ -403,6 +409,7 @@ struct Game {
                 }
             }
         }
+        cout << "cnt :" << cnt << endl;
         return cnt;
     }
 
@@ -480,9 +487,19 @@ struct Game {
         return connectedness;
     }
 
+    int utility(int color){
+        int c1 = 3;
+        int c2 = 4;
+        int c3 = 5;
+        int h1 = heuristic_piece_square_table(color);
+        int h2 = heuristic_area(color);
+        int h3 = heuristic_connectedness(color);
+        return c1 * h1 + c2 * h2 + c3 * h3;
+    }
+
     /************************************** get, set **********************************************/
 
-    int get(int i, int j) {
+    int get_ij(int i, int j) {
         return board[i][j];
     }
 
@@ -509,16 +526,100 @@ struct Game {
 
     /****************************** Minimax with alpha beta pruning ************************************/
 
+    // returns all the valid moves by order, order = 0 -> descending
+    vector<tuple<int, Position, Position>> get_ordered_moves(int color, int order){
+        vector<pair<int, pair<int,int>>> moves;
+        vector<tuple<int, pii, pii>> tp;
+        vector<tuple<int, Position, Position>> ret;
+        int n = pos_color[color].size();
+        int current_util = utility(BOTS_COLOR);
+        for(int i=0;i<n;i++){
+            vector<Position> end_positions = generate_all_moves(pos_color[color][i], color);
+            Position now = pos_color[color][i];
+            for(auto end : end_positions){
+                make_move(now, end);
+                int changed_util = utility(BOTS_COLOR);
+                tp.push_back({changed_util, {now.x, now.y}, {end.x, end.y}});
+                // moves.push_back({changed_util, {now.x, now.y}});
+                make_move(end, now);
+            }
+        }
+
+        sort(tp.begin(), tp.end());
+        if(order == 0)
+            reverse(tp.begin(), tp.end());
+
+        for(auto ele : tp){
+            int e1 = get<0>(ele);
+            pii e2 = get<1>(ele);
+            pii e3 = get<2>(ele);
+            Position p1(e2.ff, e2.ss);
+            Position p2(e3.ff, e3.ss);
+            ret.push_back({e1, p1, p2});
+        }
+
+        return ret;
+    }
+
     // sets the next_move
     int backtrack(Game game, int depth, int color, bool isMax, int alpha, int beta){
         if(depth == 0){
-            return game.heuristic_piece_square_table(color);
+            // return game.utility(BOTS_COLOR);
+            return game.heuristic_piece_square_table(BOTS_COLOR);
         }
         int n = game.pos_color[color].size();
         int mx = -INF;
         int mn = INF;
         Position from;
         Position next_move;
+
+        // vector<tuple<int, Position, Position>> order = game.get_ordered_moves(color, isMax);
+        // for(auto ele : order){
+        //     vector<vector<int>> new_board = game.board;
+        //     Position start_pos = get<1>(ele);
+        //     Position end_pos = get<2>(ele);
+        //     new_board[start_pos.x][start_pos.y] = BLANK;
+        //     new_board[end_pos.x][end_pos.y] = color;
+        //     Game new_game(new_board);
+
+        //     int result = backtrack(new_game, depth - 1, abs(1 - color), !isMax, alpha, beta);
+        //     // cout << "d : " << depth << endl;
+        //     // start_pos.print();
+        //     // end_pos.print();
+        //     // cout << result << endl;
+        //     // cout << "-----\n";
+
+        //     if(isMax){
+        //         if(mx < result){
+        //             mx = result;
+        //             from = start_pos;
+        //             next_move = end_pos;
+        //         }
+        //         alpha = max(alpha, mx);
+        //         if(beta <= alpha) {
+        //             this -> move_from = start_pos;
+        //             this -> move_to = next_move;
+        //             // cout << "mx : " << mx << endl;
+        //             return mx;
+        //         }
+        //         // mx = max(mx, result);
+                
+        //     }else{
+        //         if(mn > result){
+        //             mn = result;
+        //             from = start_pos;
+        //             next_move = end_pos;
+        //         }
+        //         beta = min(beta, mn);
+        //         if(beta <= alpha) {
+        //             this -> move_from = start_pos;
+        //             this -> move_to = next_move;
+        //             // cout << "mn : " << mn << endl;
+        //             return mn;
+        //         }
+        //     }
+        // }
+
         for(int i=0;i<n;i++){
             vector<Position> end_positions = game.generate_all_moves(game.pos_color[color][i], color);
             for(auto ep : end_positions){
@@ -532,7 +633,7 @@ struct Game {
                 // new_game.print_board();
                 // cout << "heu : " << new_game.heuristic_piece_square_table(color) << endl;
                 
-                int result = backtrack(new_game, depth - 1, color, !isMax, alpha, beta);
+                int result = backtrack(new_game, depth - 1, abs(1 - color), !isMax, alpha, beta);
                 // cout << "d : " << depth << endl;
                 // start_pos.print();
                 // end_pos.print();
@@ -644,46 +745,66 @@ Position dum(){
 void solve(ll cs){
     int i, j, dimension = 8;
     // cin >> dimension;
-    vector<vector<int>> board(dimension, vector<int> (dimension));
-    for(i=0;i<dimension;i++) {
-        for(j=0;j<dimension;j++){
-            cin >> board[i][j];
-        }
-    }
-
-    // vector<vector<int>> board = {
-    //     {2, 2, 1, 1, 1, 1, 1, 2},
-    //     {0, 2, 2, 2, 2, 2, 2, 0},
-    //     {0, 2, 2, 2, 2, 2, 1, 0},
-    //     {0, 2, 2, 2, 2, 2, 1, 0},
-    //     {2, 2, 0, 2, 0, 1, 2, 0},
-    //     {0, 2, 2, 2, 2, 2, 1, 0},
-    //     {0, 2, 2, 2, 2, 2, 1, 0},
-    //     {2, 2, 2, 1, 1, 1, 1, 2}
-    // };
-    // int start_y, start_x, end_x, end_y;
-    // char ch;
-    // cin >> start_x >> start_y;
-    // cin >> end_x >> end_y;
+    // vector<vector<int>> board(dimension, vector<int> (dimension));
+    // for(i=0;i<dimension;i++) {
+    //     for(j=0;j<dimension;j++){
+    //         cin >> board[i][j];
+    //     }
+    // }
+    auto start = high_resolution_clock::now(); 
+    vector<vector<int>> board = {
+        {2, 2, 1, 1, 1, 1, 1, 2},
+        {0, 2, 2, 2, 2, 2, 2, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {2, 2, 0, 2, 0, 1, 2, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {0, 2, 2, 2, 2, 2, 1, 0},
+        {2, 2, 2, 1, 1, 1, 1, 2}
+    };
+    int start_y, start_x, end_x, end_y;
+    char ch;
+    cin >> start_x >> start_y;
+    cin >> end_x >> end_y;
 
 
     // Position p1(start_x, start_y);
     // Position p2(end_x, end_y);
     Game b(board);
-    Position px(4, 5);
+    std::ofstream ofs ("check_moves", std::ofstream::out);
+    // ofs << start_x << " " << start_y << endl;
+    // ofs << end_x << " " << end_y << endl;
     cout << b.is_black_winner() << endl;
-    
+    b.backtrack(b, 5, B, true, -INF, INF);
+    // b.print_best_move();
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    ofs << "Time taken by the code: " << duration.count() / 1e6 << " seconds" << endl;
+    ofs.close();
+
+    // Position px(4, 5);
+
+    // vector<tuple<int, Position, Position>> vp = b.get_ordered_moves(W, 1);
+    // cout << vp.size() << endl;
+    // for(auto ele : vp){
+    //     int e1 = get<0>(ele);
+    //     Position p1 = get<1>(ele);
+    //     Position p2 = get<2>(ele);
+    //     cout << e1 << ", " << "(" << p1.x << " " << p1.y << "), " << "(" << p2.x << " " << p2.y << ")" << endl;
+    // }
+
     // b.make_move(p1, p2);
-    Position p1(6, 2);
-    Position p2(3, 5);
-    Position p(7, 6);
-    // cout << b.exists_left_diag(W, p, p1) << endl;
-    // b.print();
-    // cout << b.exists_right_diag(B, p2, p1) << endl;
-    vector<Position> v = b.generate_all_moves(px, W);
-    for(auto ele : v){
-        cout << ele.x << " " << ele.y << endl;
-    }
+    // Position p1(6, 2);
+    // Position p2(3, 5);
+    // Position p(7, 6);
+    // // cout << b.exists_left_diag(W, p, p1) << endl;
+    // // b.print();
+    // // cout << b.exists_right_diag(B, p2, p1) << endl;
+    // vector<Position> v = b.generate_all_moves(px, W);
+    // for(auto ele : v){
+    //     cout << ele.x << " " << ele.y << endl;
+    // }
 
 
     // b.backtrack(b, 4, B, true, -INF, INF);
@@ -701,18 +822,14 @@ int main()
     ios::sync_with_stdio(false);
 #ifndef ONLINE_JUDGE
     freopen("in_test", "r", stdin);
-    // freopen("out_test", "w", stdout);
+    freopen("out_test", "w", stdout);
 #endif // ONLINE_JUDGE
 
     ll tt = 1;
     // cin >> tt;
     ll cs = 1;
-    // while (tt--)
-    //     solve(cs++);
-    cout << 0 << " " << 9 << endl;
-    cout << 0 << " " << 9 << endl;
-    cout << 0 << " " << 9 << endl;
-    cout << 0 << " " << 9 << endl;
+    while (tt--)
+        solve(cs++);
 
     return 0;
 }

@@ -1,5 +1,6 @@
 import pygame as p
 import subprocess
+import pygame_menu
 from Chess import ChessEngine
 
 WIDTH = HEIGHT = 512
@@ -7,6 +8,7 @@ DIMENSION = 8
 SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
+
 
 # Initialize a global dictionary of images. This will be called exactly in the main
 
@@ -18,19 +20,34 @@ def loadImages():
 	IMAGES[0] = p.transform.scale(p.image.load("images/bp.png"), (SQ_SIZE, SQ_SIZE))
 	IMAGES[1] = p.transform.scale(p.image.load("images/wp.png"), (SQ_SIZE, SQ_SIZE))
 
+def highlighSquare(screen, gs, validMoves, sqSelected):
+	if sqSelected != ():
+		r, c = sqSelected
+		if gs.board[r][c] == (1 if gs.whiteToMove else 0):
+			s = p.Surface((SQ_SIZE, SQ_SIZE))
+			s.set_alpha(100)
+			s.fill(p.Color('blue'))
+			screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
+
+			s.fill(p.Color('yellow'))
+			for move in validMoves:
+				# if move.startRow == r and move.startCol == c:
+				screen.blit(s, (SQ_SIZE * move[1], SQ_SIZE * move[0]))
+
+
 
 # The main driver for oue code. This will handle user input and updating the graphics
 
 def main():
-	p.init()
+	# p.init()
 	screen = p.display.set_mode((WIDTH, HEIGHT))
 	clock = p.time.Clock()
 	screen.fill(p.Color("white"))
 	gs = ChessEngine.GameState()
 	loadImages()
 	running = True
-	sqSeleceted = () # will keep track of the last click of the user (row, col)
-	playerClicks = [] # keep track of the player clicks (e.g. [(6, 4), (4, 4)]
+	sqSeleceted = ()  # will keep track of the last click of the user (row, col)
+	playerClicks = []  # keep track of the player clicks (e.g. [(6, 4), (4, 4)]
 	print(gs.row_total)
 	print(gs.col_total)
 	print(gs.diag_rl_total)
@@ -38,7 +55,7 @@ def main():
 	my_turn = True
 	validMoves = []
 	first_move = True
-	subprocess.run('g++ -O2 main.cpp -o main', shell=True, capture_output=True) #compiling the cpp code
+	subprocess.run('g++ -O2 main.cpp -o main', shell=True, capture_output=True)  # compiling the cpp code
 	while running:
 		if my_turn:
 			for e in p.event.get():
@@ -46,21 +63,21 @@ def main():
 					running = False
 
 
-				#Mouse handler
+				# Mouse handler
 				elif e.type == p.MOUSEBUTTONDOWN:
-					location = p.mouse.get_pos() # x, y location of mouse
+					location = p.mouse.get_pos()  # x, y location of mouse
 					col = location[0] // SQ_SIZE
 					row = location[1] // SQ_SIZE
 					if sqSeleceted == (row, col):
-						sqSeleceted = () # deselect
-						playerClicks = [] #clear player clicks
+						sqSeleceted = ()  # deselect
+						playerClicks = []  # clear player clicks
 					else:
 						sqSeleceted = (row, col)
-						playerClicks.append(sqSeleceted) #append first and second clicks
+						playerClicks.append(sqSeleceted)  # append first and second clicks
 						if len(playerClicks) == 1 and gs.board[row][col] != 2:
 							color = gs.board[row][col]
 							print("row col color:", row, col, color)
-							validMoves = gs.generate_all_moves((row,col), color)
+							validMoves = gs.generate_all_moves((row, col), color)
 							for i in gs.board:
 								for j in i:
 									print(j, end=' ')
@@ -87,16 +104,17 @@ def main():
 								for j in range(DIMENSION):
 									f.write(str(gs.board[i][j]) + ' ')
 								f.write('\n')
-							f.write(str(playerClicks[0][0]) + ' ' + str(playerClicks[0][1]) + '\n' + str(playerClicks[1][0]) + ' ' + str(playerClicks[1][1]))
+							f.write(str(playerClicks[0][0]) + ' ' + str(playerClicks[0][1]) + '\n' + str(
+								playerClicks[1][0]) + ' ' + str(playerClicks[1][1]))
 							f.close()
 							my_turn = False
 							sqSeleceted = ()
 							playerClicks = []
-					#key handler
-					#Undo
-					# elif e.type == p.KEYDOWN:
-					# 	if e.key == p.K_z:
-					# 		gs.undoMove()
+				# key handler
+				# Undo
+				# elif e.type == p.KEYDOWN:
+				# 	if e.key == p.K_z:
+				# 		gs.undoMove()
 		else:
 			my_turn = True
 			out = subprocess.run('main.exe', shell=True, capture_output=True)
@@ -122,26 +140,12 @@ def main():
 				print(move.getChessNotation())
 				gs.makeMove(move)
 
-
-
-
 		drawGameState(screen, gs, validMoves, sqSeleceted)
 		clock.tick(MAX_FPS)
 		p.display.flip()
 
-def highlighSquare(screen, gs, validMoves, sqSelected):
-	if sqSelected != ():
-		r, c = sqSelected
-		if gs.board[r][c] == (1 if gs.whiteToMove else 0):
-			s = p.Surface((SQ_SIZE, SQ_SIZE))
-			s.set_alpha(100)
-			s.fill(p.Color('blue'))
-			screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
 
-			s.fill(p.Color('yellow'))
-			for move in validMoves:
-				# if move.startRow == r and move.startCol == c:
-				screen.blit(s, (SQ_SIZE * move[1], SQ_SIZE * move[0]))
+
 
 
 # Draw the squares on the board
@@ -168,6 +172,21 @@ def drawGameState(screen, gs, validMoves, sqSelected):
 	drawPieces(screen, gs.board)
 	highlighSquare(screen, gs, validMoves, sqSelected)
 
+def dummy():
+	pass
+
+
 if __name__ == "__main__":
 	main()
+
+
+# p.init()
+# surface = p.display.set_mode((600, 400))
+# menu = pygame_menu.Menu(300, 400, 'Welcome', theme=pygame_menu.themes.THEME_BLUE)
+#
+# menu.add_text_input('Name :', default='Unnamed')
+# # menu.add_selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
+# menu.add_button('Play', main)
+# menu.add_button('Quit', pygame_menu.events.EXIT)
+# menu.mainloop(surface)
 

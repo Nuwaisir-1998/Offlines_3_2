@@ -1,2 +1,2 @@
-g++ test.cpp -o test
+g++ -O2 test.cpp -o test
 ./test.exe

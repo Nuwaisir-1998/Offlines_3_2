@@ -1,5 +1,9 @@
 (done)1. dont compile every time
+(done)2. try to improve alpha-beta pruning (maybe by samin's idea or think of your own idea)
 
-2. try to improve alpha-beta pruning (maybe by samin's idea or think of your own idea)
 3. comment out the ofstream part
-4. iterative deepening
+(done)4. iterative deepening
+5. human vs human
+6. fix heuristic (kaloder component er oitao count kora dorkar maybe)
+7. fix movements
+8. previous moves colored

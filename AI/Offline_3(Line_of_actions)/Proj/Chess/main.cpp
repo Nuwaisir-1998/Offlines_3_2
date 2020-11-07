@@ -2,7 +2,8 @@
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 #include <ext/numeric>
-#include<windows.h>
+#include <windows.h>
+#include <time.h>
 
 using namespace std;
 using namespace __gnu_pbds;
@@ -63,6 +64,12 @@ gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 #define SOMETHING 0
 #define ALPHA 0
 #define BETA 1
+#define DEPTH 4
+
+int BOTS_COLOR = 0;
+bool time_over = false;
+
+clock_t start_t;
 
 struct Position {
     int x, y;
@@ -450,7 +457,7 @@ struct Game {
         return (mx_x - mn_x + 1) * (mx_y - mn_y + 1);
     }
 
-    int heuristic_connectedness(int color){
+    int connectedness_of(int color){
         int n = pos_color[color].size();
         vector<int> dx = {1, 1, 0, -1, -1, -1, 0, 1};
         vector<int> dy = {0, -1, -1, -1, 0, 1, 1, 1};
@@ -471,6 +478,10 @@ struct Game {
         return connectedness;
     }
 
+    int heuristic_connectedness(int color){
+        return connectedness_of(color) - connectedness_of(abs(1 - color));
+    }
+
     int utility(int color){
         int c1 = 3;
         int c2 = 4;
@@ -485,7 +496,7 @@ struct Game {
 
     /************************************** get, set **********************************************/
 
-    int get(int i, int j) {
+    int get_ij(int i, int j) {
         return board[i][j];
     }
 
@@ -507,15 +518,18 @@ struct Game {
 
 
 
-
-
-
     /****************************** Minimax with alpha beta pruning ************************************/
 
     // sets the next_move
     int backtrack(Game game, int depth, int color, bool isMax, int alpha, int beta){
+        if(time_over) return -INF;
         if(depth == 0){
-            return game.utility(color);
+            // cout << "time_stamp" << (double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC << endl;
+            if((double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC > 2.0){
+                time_over = true;
+                return -INF;
+            }
+            return game.utility(BOTS_COLOR);
         }
         int n = game.pos_color[color].size();
         int mx = -INF;
@@ -535,7 +549,7 @@ struct Game {
                 // new_game.print_board();
                 // cout << "heu : " << new_game.heuristic_piece_square_table(color) << endl;
                 
-                int result = backtrack(new_game, depth - 1, color, !isMax, alpha, beta);
+                int result = backtrack(new_game, depth - 1, abs(1 - color), !isMax, alpha, beta);
                 // cout << "d : " << depth << endl;
                 // start_pos.print();
                 // end_pos.print();
@@ -666,8 +680,8 @@ void solve(ll cs){
     ofs << start_x << " " << start_y << endl;
     ofs << end_x << " " << end_y << endl;
     
-
-    auto start = high_resolution_clock::now(); 
+    start_t = clock();
+    // auto start_c = high_resolution_clock::now(); 
 
     Position p1(start_x, start_y);
     Position p2(end_x, end_y);
@@ -683,26 +697,42 @@ void solve(ll cs){
         return;
     }
     // b.make_move(p1, p2);
-    
-    b.backtrack(b, 4, B, true, -INF, INF);
+    pair<Position, Position> from_to;
+    for(int i=1;i<10;i++){
+        b.backtrack(b, i, B, true, -INF, INF);
+        // cout << 
+        // cout << "time: " << start_t * 1.0 / CLOCKS_PER_SEC << endl;
+        if(time_over) {
+            ofs << "depth : " << i << endl;
+            break;
+        }
+        from_to = b.get_best_move();
+        
+    }
     // b.backtrack(b, 5, W, true, -INF, INF);
     // b.make_move(b.get_best_move().first, b.get_best_move().second);
     
-    b.make_move(b.get_best_move().first, b.get_best_move().second);
+
+    b.make_move(from_to.first, from_to.second);
 
     if(b.is_black_winner()){
         cout << 0 << " " << 9 << endl;
         cout << 0 << " " << 9 << endl;
     }
-    b.print_best_move();
-    // b.print_board();
-    // b.print();
-    // cout << "finished 2 \n";
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    ofs << "Time taken by the code: " << duration.count() / 1e6 << " seconds" << endl;
+    // b.print_best_move();
+    cout << from_to.first.x << " " << from_to.first.y << endl;
+    cout << from_to.second.x << " " << from_to.second.y << endl;
+
+    double elapsed = (double)(clock() - start_t) / CLOCKS_PER_SEC;
+    ofs << "Time: " << elapsed << endl;
+    
+    // auto stop_c = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(stop_c - start_c);
+    // ofs << "Time taken by the code: " << duration.count() / 1e6 << " seconds" << endl;
     ofs.close();
 }
+
+
 
 int main()
 {
