@@ -119,7 +119,7 @@ class GameState():
         cnt_r = self.row_total[r]
         if c - cnt_r >= 0 and self.board[r][c - cnt_r] != color:
             end_p = (r, c - cnt_r)
-            if self.exists_col(abs(1 - color), p, end_p):
+            if self.exists_row(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
 
@@ -130,7 +130,7 @@ class GameState():
         cnt_r = self.row_total[r]
         if c + cnt_r < self.dimension and self.board[r][c + cnt_r] != color:
             end_p = (r, c + cnt_r)
-            if self.exists_col(abs(1 - color), p, end_p):
+            if self.exists_row(abs(1 - color), p, end_p):
                 return (-1, -1)
         return end_p
 

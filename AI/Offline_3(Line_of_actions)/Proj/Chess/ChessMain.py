@@ -70,21 +70,28 @@ def main():
 							print(gs.diag_rl_total)
 							print(gs.diag_lr_total)
 							print(validMoves)
+						elif len(playerClicks) == 1 and gs.board[row][col] == 2:
+							sqSeleceted = ()  # deselect
+							playerClicks = []  # clear player clicks
 					if len(playerClicks) == 2:
-						move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-						print(move.getChessNotation())
-						gs.makeMove(move)
-						# new_board = change_board_notation(gs.board)
-						f = open("in", "w")
-						for i in range(DIMENSION):
-							for j in range(DIMENSION):
-								f.write(str(gs.board[i][j]) + ' ')
-							f.write('\n')
-						f.write(str(playerClicks[0][0]) + ' ' + str(playerClicks[0][1]) + '\n' + str(playerClicks[1][0]) + ' ' + str(playerClicks[1][1]))
-						f.close()
-						my_turn = False
-						sqSeleceted = ()
-						playerClicks = []
+						if playerClicks[1] not in validMoves:
+							sqSeleceted = ()  # deselect
+							playerClicks = []  # clear player clicks
+						else:
+							move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+							print(move.getChessNotation())
+							gs.makeMove(move)
+							# new_board = change_board_notation(gs.board)
+							f = open("in", "w")
+							for i in range(DIMENSION):
+								for j in range(DIMENSION):
+									f.write(str(gs.board[i][j]) + ' ')
+								f.write('\n')
+							f.write(str(playerClicks[0][0]) + ' ' + str(playerClicks[0][1]) + '\n' + str(playerClicks[1][0]) + ' ' + str(playerClicks[1][1]))
+							f.close()
+							my_turn = False
+							sqSeleceted = ()
+							playerClicks = []
 					#key handler
 					#Undo
 					# elif e.type == p.KEYDOWN:
@@ -100,6 +107,13 @@ def main():
 			end_x = int(val[5])
 			end_y = int(val[7])
 			if start_x == 0 and start_y == 9:
+				start_x = int(val[10])
+				start_y = int(val[12])
+				end_x = int(val[15])
+				end_y = int(val[17])
+				move = ChessEngine.Move((start_x, start_y), (end_x, end_y), gs.board)
+				print(move.getChessNotation())
+				gs.makeMove(move)
 				print('black wins')
 			elif start_x == 9 and start_y == 0:
 				print('white wins')

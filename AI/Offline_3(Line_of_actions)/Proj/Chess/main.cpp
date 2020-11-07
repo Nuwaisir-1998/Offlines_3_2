@@ -433,6 +433,56 @@ struct Game {
         return sum;
     }
 
+    int heuristic_area(int color){
+        int n = pos_color[color].size();
+        int mn_x = INF;
+        int mn_y = INF;
+        int mx_x = -1;
+        int mx_y = -1;
+        for(int i=0;i<n;i++){
+            int x = pos_color[color][i].x;
+            int y = pos_color[color][i].y;
+            mn_x = min(mn_x, x);
+            mn_y = min(mn_y, y);
+            mx_x = max(mx_x, x);
+            mx_y = max(mx_y, y);
+        }
+        return (mx_x - mn_x + 1) * (mx_y - mn_y + 1);
+    }
+
+    int heuristic_connectedness(int color){
+        int n = pos_color[color].size();
+        vector<int> dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        vector<int> dy = {0, -1, -1, -1, 0, 1, 1, 1};
+        int connectedness = 0;
+        for(int i=0;i<n;i++){
+            int x = pos_color[color][i].x;
+            int y = pos_color[color][i].y;
+            int val = 0;
+            for(int j=0;j<8;j++){
+                if(x + dx[j] < dimension and x + dx[j] >= 0 and y + dy[j] < dimension and y + dy[j] >= 0){
+                    if(board[x + dx[j]][y + dy[j]] == color){
+                        val++;
+                    }
+                }
+            }
+            connectedness += val;
+        }
+        return connectedness;
+    }
+
+    int utility(int color){
+        int c1 = 3;
+        int c2 = 4;
+        int c3 = 5;
+        int h1 = heuristic_piece_square_table(color);
+        int h2 = heuristic_area(color);
+        int h3 = heuristic_connectedness(color);
+        return c1 * h1 + c2 * h2 + c3 * h3;
+    }
+
+
+
     /************************************** get, set **********************************************/
 
     int get(int i, int j) {
@@ -465,7 +515,7 @@ struct Game {
     // sets the next_move
     int backtrack(Game game, int depth, int color, bool isMax, int alpha, int beta){
         if(depth == 0){
-            return game.heuristic_piece_square_table(color);
+            return game.utility(color);
         }
         int n = game.pos_color[color].size();
         int mx = -INF;
@@ -637,14 +687,14 @@ void solve(ll cs){
     b.backtrack(b, 4, B, true, -INF, INF);
     // b.backtrack(b, 5, W, true, -INF, INF);
     // b.make_move(b.get_best_move().first, b.get_best_move().second);
-    b.print_best_move();
+    
     b.make_move(b.get_best_move().first, b.get_best_move().second);
 
     if(b.is_black_winner()){
         cout << 0 << " " << 9 << endl;
         cout << 0 << " " << 9 << endl;
-        return;
     }
+    b.print_best_move();
     // b.print_board();
     // b.print();
     // cout << "finished 2 \n";

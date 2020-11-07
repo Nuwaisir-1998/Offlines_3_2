@@ -2,3 +2,4 @@
 
 2. try to improve alpha-beta pruning (maybe by samin's idea or think of your own idea)
 3. comment out the ofstream part
+4. iterative deepening

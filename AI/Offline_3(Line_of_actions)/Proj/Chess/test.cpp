@@ -442,6 +442,44 @@ struct Game {
         return sum;
     }
 
+    int heuristic_area(int color){
+        int n = pos_color[color].size();
+        int mn_x = INF;
+        int mn_y = INF;
+        int mx_x = -1;
+        int mx_y = -1;
+        for(int i=0;i<n;i++){
+            int x = pos_color[color][i].x;
+            int y = pos_color[color][i].y;
+            mn_x = min(mn_x, x);
+            mn_y = min(mn_y, y);
+            mx_x = max(mx_x, x);
+            mx_y = max(mx_y, y);
+        }
+        return (mx_x - mn_x + 1) * (mx_y - mn_y + 1);
+    }
+
+    int heuristic_connectedness(int color){
+        int n = pos_color[color].size();
+        vector<int> dx = {1, 1, 0, -1, -1, -1, 0, 1};
+        vector<int> dy = {0, -1, -1, -1, 0, 1, 1, 1};
+        int connectedness = 0;
+        for(int i=0;i<n;i++){
+            int x = pos_color[color][i].x;
+            int y = pos_color[color][i].y;
+            int val = 0;
+            for(int j=0;j<8;j++){
+                if(x + dx[j] < dimension and x + dx[j] >= 0 and y + dy[j] < dimension and y + dy[j] >= 0){
+                    if(board[x + dx[j]][y + dy[j]] == color){
+                        val++;
+                    }
+                }
+            }
+            connectedness += val;
+        }
+        return connectedness;
+    }
+
     /************************************** get, set **********************************************/
 
     int get(int i, int j) {
@@ -606,23 +644,23 @@ Position dum(){
 void solve(ll cs){
     int i, j, dimension = 8;
     // cin >> dimension;
-    // vector<vector<int>> board(dimension, vector<int> (dimension));
-    // for(i=0;i<dimension;i++) {
-    //     for(j=0;j<dimension;j++){
-    //         cin >> board[i][j];
-    //     }
-    // }
+    vector<vector<int>> board(dimension, vector<int> (dimension));
+    for(i=0;i<dimension;i++) {
+        for(j=0;j<dimension;j++){
+            cin >> board[i][j];
+        }
+    }
 
-    vector<vector<int>> board = {
-        {2, 1, 1, 1, 1, 1, 1, 2},
-        {0, 2, 2, 2, 2, 2, 2, 0},
-        {0, 2, 2, 2, 2, 2, 1, 0},
-        {0, 2, 2, 2, 2, 2, 1, 0},
-        {0, 2, 2, 2, 2, 2, 1, 0},
-        {0, 2, 2, 2, 2, 2, 1, 0},
-        {0, 2, 2, 2, 2, 2, 1, 0},
-        {2, 1, 1, 1, 1, 1, 1, 2}
-    };
+    // vector<vector<int>> board = {
+    //     {2, 2, 1, 1, 1, 1, 1, 2},
+    //     {0, 2, 2, 2, 2, 2, 2, 0},
+    //     {0, 2, 2, 2, 2, 2, 1, 0},
+    //     {0, 2, 2, 2, 2, 2, 1, 0},
+    //     {2, 2, 0, 2, 0, 1, 2, 0},
+    //     {0, 2, 2, 2, 2, 2, 1, 0},
+    //     {0, 2, 2, 2, 2, 2, 1, 0},
+    //     {2, 2, 2, 1, 1, 1, 1, 2}
+    // };
     // int start_y, start_x, end_x, end_y;
     // char ch;
     // cin >> start_x >> start_y;
@@ -632,8 +670,8 @@ void solve(ll cs){
     // Position p1(start_x, start_y);
     // Position p2(end_x, end_y);
     Game b(board);
-
-    cout << b.is_white_winner() << endl;
+    Position px(4, 5);
+    cout << b.is_black_winner() << endl;
     
     // b.make_move(p1, p2);
     Position p1(6, 2);
@@ -642,7 +680,7 @@ void solve(ll cs){
     // cout << b.exists_left_diag(W, p, p1) << endl;
     // b.print();
     // cout << b.exists_right_diag(B, p2, p1) << endl;
-    vector<Position> v = b.generate_all_moves(p, W);
+    vector<Position> v = b.generate_all_moves(px, W);
     for(auto ele : v){
         cout << ele.x << " " << ele.y << endl;
     }
@@ -663,15 +701,18 @@ int main()
     ios::sync_with_stdio(false);
 #ifndef ONLINE_JUDGE
     freopen("in_test", "r", stdin);
-    freopen("out_test", "w", stdout);
+    // freopen("out_test", "w", stdout);
 #endif // ONLINE_JUDGE
 
     ll tt = 1;
     // cin >> tt;
     ll cs = 1;
-    while (tt--)
-        solve(cs++);
-
+    // while (tt--)
+    //     solve(cs++);
+    cout << 0 << " " << 9 << endl;
+    cout << 0 << " " << 9 << endl;
+    cout << 0 << " " << 9 << endl;
+    cout << 0 << " " << 9 << endl;
 
     return 0;
 }
