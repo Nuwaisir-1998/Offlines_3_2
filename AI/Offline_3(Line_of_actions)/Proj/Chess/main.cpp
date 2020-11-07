@@ -66,10 +66,12 @@ gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 #define BETA 1
 #define DEPTH 4
 
+std::ofstream ofs ("check_moves", std::ofstream::out);
 
 int TIME_LIMIT = 2;
 int BOTS_COLOR = 0;
 bool time_over = false;
+int lim = 10;
 
 clock_t start_t;
 
@@ -429,6 +431,20 @@ struct Game {
     }
 
     /***************************** Heuristics ********************************/
+
+    Position center_of_mass(vector<Position> & vp){
+        int sumx = 0, sumy = 0;
+        for(auto ele : vp){
+            sumx += ele.x;
+            sumy += ele.y;
+        }
+        Position ret(sumx / vp.size(), sumy / vp.size());
+        return ret;
+    }
+
+    int dist(Position p1, Position p2){
+        return max(abs(p1.x - p2.x), abs(p1.y - p2.y));
+    }
     
     int heuristic_piece_square_table(int color){
         int n = pos_color[color].size();
@@ -484,14 +500,47 @@ struct Game {
         return connectedness_of(color) - connectedness_of(abs(1 - color));
     }
 
+    int count_quad(int color){
+        Position com = center_of_mass(pos_color[color]);
+        int start_x = max(0, com.x - 2);
+        int start_y = max(0, com.y - 2);
+        int end_x = min(dimension - 2, com.x + 2);
+        int end_y = min(dimension - 2, com.y + 2);
+        int q_cnt = 0;
+        for(int i=start_x;i<=end_x;i++){
+            for(int j=start_y;j<=end_y;j++){
+                // if(i < 0 or i >= dimension or j < 0 or j >= dimension) continue;
+                int cnt = 0;
+                if(board[i][j] == color) cnt++;
+                if(board[i][j+1] == color) cnt++;
+                if(board[i+1][j] == color) cnt++;
+                if(board[i+1][j+1] == color) cnt++;
+                if(cnt >= 3){
+                    q_cnt++;
+                }
+            }
+        }
+        return q_cnt;
+    }
+
+    int heuristic_qaud_count(int color){
+        return count_quad(color) - count_quad(abs(1 - color));
+    }
+
     int utility(int color){
-        int c1 = 3;
-        int c2 = 4;
-        int c3 = 5;
+        int c1 = 2;
+        int c2 = 10;
+        int c3 = 15;
+        int c4 = 150;
         int h1 = heuristic_piece_square_table(color);
         int h2 = heuristic_area(color);
         int h3 = heuristic_connectedness(color);
-        return c1 * h1 + c2 * h2 + c3 * h3;
+        int h4 = heuristic_qaud_count(color);
+        if(lim){
+            lim--;
+            ofs << c1*h1 << " " << c2*h2 << " " << c3*h3 << " " << c4*h4 << endl;
+        }
+        return c1 * h1 + c2 * h2 + c3 * h3 + c4 * h4;
     }
 
 
@@ -681,7 +730,7 @@ void solve(ll cs){
     cin >> start_x >> start_y;
     cin >> end_x >> end_y;
 
-    std::ofstream ofs ("check_moves", std::ofstream::out);
+    
     ofs << "Bots color " << bots_color << endl;
     ofs << start_x << " " << start_y << endl;
     ofs << end_x << " " << end_y << endl;
@@ -696,6 +745,15 @@ void solve(ll cs){
     Position p_win2(0, 9);
 
     Game b(board);
+
+
+
+    // Position com = b.center_of_mass(b.pos_color[W]);
+    // com.print();
+
+
+
+
     if(bots_color == 0){
         if(b.is_white_winner()){
             cout << 9 << " " << 0 << endl;

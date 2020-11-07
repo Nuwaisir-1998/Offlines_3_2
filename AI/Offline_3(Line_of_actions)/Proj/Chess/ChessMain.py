@@ -31,6 +31,15 @@ def loadImages():
 	IMAGES[0] = p.transform.scale(p.image.load("images/bp.png"), (SQ_SIZE, SQ_SIZE))
 	IMAGES[1] = p.transform.scale(p.image.load("images/wp.png"), (SQ_SIZE, SQ_SIZE))
 
+def drawText(screen, text):
+	print("inside drawText")
+	font = p.font.SysFont("Helvetica", 32, True, False)
+	textObject = font.render(text, 0, p.Color('Black'))
+	textLocation = p.Rect(0, 0, WIDTH, HEIGHT).move(WIDTH/2 - textObject.get_width()/2, HEIGHT/2 - textObject.get_height() / 2)
+	screen.blit(textObject, textLocation)
+	textObject = font.render(text, 0, p.Color("Gray"))
+	screen.blit(textObject, textLocation.move(2, 2))
+
 def highlighSquare(screen, gs, validMoves, sqSelected):
 	if sqSelected != ():
 		r, c = sqSelected
@@ -145,8 +154,10 @@ def main():
 				print(move.getChessNotation())
 				gs.makeMove(move)
 				print('bot wins')
+				drawText(screen, 'bot wins')
 			elif start_x == 9 and start_y == 0:
 				print('you win')
+				drawText(screen, 'you win')
 			else:
 				move = ChessEngine.Move((start_x, start_y), (end_x, end_y), gs.board)
 				print(move.getChessNotation())
@@ -184,6 +195,9 @@ def drawGameState(screen, gs, validMoves, sqSelected):
 	drawBoard(screen)
 	drawPieces(screen, gs.board)
 	highlighSquare(screen, gs, validMoves, sqSelected)
+
+
+
 
 def dummy():
 	pass
