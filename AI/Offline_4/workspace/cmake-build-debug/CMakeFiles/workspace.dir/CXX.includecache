@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+E:/Offlines_3_2/AI/Offline_4/workspace/main.cpp
+bits/stdc++.h
+-
+ext/pb_ds/assoc_container.hpp
+-
+ext/pb_ds/tree_policy.hpp
+-
+ext/numeric
+-
+

@@ -1,0 +1,4 @@
+"C:\Program Files\JetBrains\CLion 2020.2.4\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=C:/MinGW/bin/g++.exe -G "CodeBlocks - MinGW Makefiles" E:\Offlines_3_2\AI\Offline_4\workspace
+-- Configuring done
+-- Generating done
+-- Build files have been written to: E:/Offlines_3_2/AI/Offline_4/workspace/cmake-build-debug
