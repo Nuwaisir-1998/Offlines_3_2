@@ -439,8 +439,8 @@ public:
     }
 
     void calc_impact(){
-        cout << "----------------------------\n";
-        print();
+        // cout << "----------------------------\n";
+        // print();
         for(auto blank : blanks){
             int r = vertices[blank].pos_x;
             int c = vertices[blank].pos_y;
@@ -453,18 +453,18 @@ public:
                 double sum = 0;
                 if(!ret) {
                     sum = 1;
-                    break;
-                }
-                vector<Vertex> changed_vertices = g.vertices;
-                // now calculate impact
-                for(int i=0;i<vertices.size();i++){
-                    if(vertices[i].dom.empty()) sum = 1;
-                    else sum += (changed_vertices[i].dom.size() * 1.0 / vertices[i].dom.size());
+                }else{
+                    vector<Vertex> changed_vertices = g.vertices;
+                    // now calculate impact
+                    for(int i=0;i<vertices.size();i++){
+                        if(vertices[i].dom.empty()) sum = 1;
+                        else sum += (changed_vertices[i].dom.size() * 1.0 / vertices[i].dom.size());
+                    }
                 }
                 impact += sum;
             }
             map_vertex_impact[blank] = impact;
-            cout << blank << " : " << map_vertex_impact[blank] << endl;
+            // cout << blank << " : " << map_vertex_impact[blank] << endl;
         }
     }
 
@@ -677,20 +677,20 @@ void solve(ll cs){
 //    g.backtrack_fc(g.get_next_sdf());
 //    cout << "node_cnt: " <<  g.node_cnt << " " << g.cnt_backtrack << endl;
 //    cout << "init blanks: " << g.init_blanks_cnt << endl;
-    g.run(MAC, IBH);
+    g.run(FC, MDH);
 }
 
 int main()
 {
     ios::sync_with_stdio(false);
 #ifndef ONLINE_JUDGE
-    freopen("../in1", "r", stdin);
-    freopen("../out", "w", stdout);
+    freopen("in6", "r", stdin);
+    freopen("out", "w", stdout);
 #endif // ONLINE_JUDGE
     ll tt = 1;
 //    cin >> tt;
     ll cs = 1;
-    cout << 2 << endl;
+    // cout << 2 << endl;
     while (tt--)
         solve(cs++);
 //    cout << 2 << endl;
