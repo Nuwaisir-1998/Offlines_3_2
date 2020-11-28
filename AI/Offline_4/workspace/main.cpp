@@ -341,21 +341,21 @@ public:
 
         while(!q.empty()){
             pair<int,int> u = q.front();
-            if(x == 2 and vertices[u.ff].id == 2 and vertices[u.ff].val == 9 and g_f) {
-//                cout << "u: " << u.ff << " " << u.ss << endl;
-                cout << "ub:\n";
-                cout << vertices[u.ff].id << " " << vertices[u.ff].val << endl;
-                g_f = false;
-                for(auto ele : board){
-                    printv(ele);
-                }
-            }
+//            if(x == 2 and vertices[u.ff].id == 2 and vertices[u.ff].val == 9 and g_f) {
+////                cout << "u: " << u.ff << " " << u.ss << endl;
+//                cout << "ub:\n";
+//                cout << vertices[u.ff].id << " " << vertices[u.ff].val << endl;
+//                g_f = false;
+//                for(auto ele : board){
+//                    printv(ele);
+//                }
+//            }
             q.pop();
             if(Revise(u)){
                 int xi = u.ff;
                 int xj = u.ss;
                 if(vertices[xi].dom.empty()) {
-                    cout << xi << " " << " false\n";
+//                    cout << xi << " " << " false\n";
                     return false;
                 }
                 for(auto neighbor : adj_blanks[xi]){
@@ -364,8 +364,8 @@ public:
                 }
             }
         }
-        cout << "printing from ac-3\n";
-        print();
+//        cout << "printing from ac-3\n";
+//        print();
         return true;
     }
 
@@ -375,8 +375,8 @@ public:
         if(u.ff == 17){
 //            cout << "Di\n";
 //            printst(Di);
-            cout << "Dj of " << u.ss << endl;
-            printst(Dj);
+//            cout << "Dj of " << u.ss << endl;
+//            printst(Dj);
         }
         bool revised = false;
         set<int> to_be_deleted;
@@ -397,6 +397,7 @@ public:
     }
 
     bool backtrack_mac(int s){
+        cout << s << endl;
         node_cnt++;
 
         Vertex s_v = vertices[s];
@@ -412,8 +413,6 @@ public:
 
         for(auto i : s_v.dom){
 //            if(vertices[s].dom.find(i) == vertices[s].dom.end()) continue;
-            cout << s << " color: " << i << endl;
-            print();
             board[cur_row][cur_col] = i;
             vertices[s].val = i;
             set<int> prev_dom = vertices[s].dom;
@@ -422,29 +421,15 @@ public:
             set<int> needs_restoration;
             bool impos = false;
 
+//            cout << s << " color: " << i << endl;
+//            print();
+
             bool ac3_result = AC3(s);
 //            print();
             if(!ac3_result) {
                 impos = true;
-                cout << "Impossible\n";
+//                cout << "Impossible\n";
             }
-
-
-//            for(int j=0;j<rows;j++) {
-//                int v1 = get_vertex_id(cur_row, j);
-//                int v2 = get_vertex_id(j, cur_col);
-//                if (board[cur_row][j] == 0) {
-//                    if(vertices[v1].dom.erase(i))
-//                        needs_restoration.insert(v1);
-//                }
-//                if (board[j][cur_col] == 0) {
-//                    if(vertices[v2].dom.erase(i))
-//                        needs_restoration.insert(v2);
-//                }
-//                if (vertices[v1].dom.empty() or vertices[v2].dom.empty()) {
-//                    impos = true;
-//                }
-//            }
 
             int next = get_next_sdf();
             if(next == -1) {
@@ -491,6 +476,10 @@ public:
 //            vertices[s].val = 0;
             for(int j=0;j<vertices.size();j++){
                 vertices[j] = saved_vertices[j];
+                int r = vertices[j].pos_x;
+                int c = vertices[j].pos_y;
+                board[r][c] = vertices[j].val;
+                if(board[r][c] == 0 and j != s) blanks.insert(vertices[j].id);
             }
         }
         blanks.insert(s);
@@ -533,7 +522,6 @@ public:
             cout << i << ": ";
             printst(vertices[i].dom);
         }
-
     }
 };
 
@@ -577,10 +565,10 @@ void solve(ll cs){
 //    vector<vector<int>> board = input();
     vector<vector<int>> board = my_input();
     Graph g(board);
-    g.print();
+//    g.print();
     g.AC3(0);
     cout << "first : " << g.get_next_sdf() << endl;
-    g.backtrack_mac(g.get_next_sdf());
+    g.backtrack_fc(g.get_next_sdf());
     cout << "node_cnt: " <<  g.node_cnt << " " << g.cnt_backtrack << endl;
     cout << "init blanks: " << g.init_blanks_cnt << endl;
 //    g.print();
@@ -591,7 +579,7 @@ int main()
 {
     ios::sync_with_stdio(false);
 #ifndef ONLINE_JUDGE
-    freopen("../in3", "r", stdin);
+    freopen("../in1", "r", stdin);
     freopen("../out", "w", stdout);
 #endif // ONLINE_JUDGE
     ll tt = 1;
