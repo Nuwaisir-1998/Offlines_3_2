@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+E:/Offlines_3_2/Networks/offline_4_data_link_layer/clion_proj/main.cpp
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+
