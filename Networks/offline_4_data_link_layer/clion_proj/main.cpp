@@ -16,7 +16,7 @@ using namespace std;
    This code should be used for PA2, unidirectional or bidirectional
    data transfer protocols (from A to B. Bidirectional transfer of data
    is for extra credit and is not required).  Network properties:
-   - one way network delay averages five time units (longer if there
+   - one way network delay averages five time_ units (longer if there
        are other packets in the channel for GBN), but can be larger
    - frames can be corrupted (either the header or the data portion)
        or lost, according to user-defined probabilities
@@ -110,7 +110,8 @@ string divide(string divident, string divisor){
 
 pair<string, string> CRC(string divident, string divisor){
     int window_size = (int)divisor.size();
-    
+    string div_zero;
+    for(int i=0;i<window_size;i++) div_zero.push_back('0');
     // append window_size - 1 zeroes
     for(int i=0;i<window_size-1;i++) divident.push_back('0');
     int divident_size = (int)divident.size();
@@ -126,7 +127,10 @@ pair<string, string> CRC(string divident, string divisor){
     string divi_str = divident.substr(idx, window_size);
     for(int i=idx;i<=divident_size - window_size;i++){
         // divi_str = divisor.substr(i, window_size);
-        string res = divide(divi_str, divisor);
+        string div_by = divisor;
+        if(divi_str[0] == '0') div_by = div_zero; 
+        // cout << i << " " << div_by << endl;
+        string res = divide(divi_str, div_by);
         res.erase(res.begin());
         if(i + window_size < divident_size)
             divi_str = res + divident[i + window_size];
@@ -135,9 +139,14 @@ pair<string, string> CRC(string divident, string divisor){
         }
     }
     string rem = divi_str;
+    // cout << "divi " << divident << endl;
+    // cout <<"rem " << rem << endl;
+    int j = divident.size() - 1;
     for(int i=(int)rem.size() - 1;i>=0;i--){
-        divident[i] = rem[i];
+        divident[j] = rem[i];
+        j--;
     }
+    // cout << "div_appn : " << divident << endl; 
     return {divident, rem};
 }
 
@@ -357,7 +366,7 @@ void A_input(struct frm frame)
     // }
 }
 
-/* called when A's timer goes off */
+/* called when A's time_r goes off */
 void A_timerinterrupt(void)
 {
     printf("(A_timerinterrupt) A sending: ");
@@ -534,10 +543,10 @@ void B_input(struct frm frame)
     }
 }
 
-/* called when B's timer goes off */
+/* called when B's time_r goes off */
 void B_timerinterrupt(void)
 {
-    // printf("  B_timerinterrupt: B doesn't have a timer. ignore.\n");
+    // printf("  B_timerinterrupt: B doesn't have a time_r. ignore.\n");
     printf("(B_timerinterrupt) B sending: ");
     if(outstanding_ack_B){
         global_frame_B.type = 2;
@@ -566,8 +575,8 @@ void B_init(void)
 The code below emulates the layer 3 and below network environment:
     - emulates the tranmission and delivery (possibly with bit-level corruption
         and frame loss) of frames across the layer 3/20 interface
-    - handles the starting/stopping of a timer, and generates timer
-        interrupts (resulting in calling students timer handler).
+    - handles the starting/stopping of a time_r, and generates time_r
+        interrupts (resulting in calling students time_r handler).
     - generates packet to be sent (passed from later 5 to 20)
 
 THERE IS NOT REASON THAT ANY STUDENT SHOULD HAVE TO READ OR UNDERSTAND
@@ -579,7 +588,7 @@ to, and you defeinitely should not have to modify
 
 struct event
 {
-    float evtime;       /* event time */
+    float evtime;       /* event time_ */
     int evtype;         /* event type code */
     int eventity;       /* entity where event occurs */
     struct frm *frmptr; /* ptr to frame (if any) assoc w/ this event */
@@ -601,7 +610,7 @@ struct event *evlist = NULL; /* the event list */
 int TRACE = 1;     /* for my debugging */
 int nsim = 0;      /* number of packets from 5 to 20 so far */
 int nsimmax = 0;   /* number of pkts to generate, then stop */
-float time = 0.000;
+float time_ = 0.000;
 float lossprob;    /* probability that a frame is dropped  */
 float corruptprob; /* probability that one bit is frame is flipped */
 float lambda;      /* arrival rate of packets from layer 5 */
@@ -640,17 +649,17 @@ int main()
             evlist->prev = NULL;
         if (TRACE >= 2)
         {
-            printf("\nEVENT time: %f,", eventptr->evtime);
+            printf("\nEVENT time_: %f,", eventptr->evtime);
             printf("  type: %d", eventptr->evtype);
             if (eventptr->evtype == 0)
-                printf(", timerinterrupt  ");
+                printf(", time_rinterrupt  ");
             else if (eventptr->evtype == 1)
                 printf(", fromlayer3 ");
             else
                 printf(", fromlayer1 ");
             printf(" entity: %d\n", eventptr->eventity);
         }
-        time = eventptr->evtime; /* update time to next event time */
+        time_ = eventptr->evtime; /* update time_ to next event time_ */
         if (eventptr->evtype == FROM_layer3)
         {
             if (nsim < nsimmax)
@@ -707,8 +716,8 @@ int main()
 
     terminate:
     printf(
-            " Simulator terminated at time %f\n after sending %d pkts from layer3\n",
-            time, nsim);
+            " Simulator terminated at time_ %f\n after sending %d pkts from layer3\n",
+            time_, nsim);
 }
 
 void init() /* initialize the simulator */
@@ -724,7 +733,7 @@ void init() /* initialize the simulator */
     scanf("%f",&lossprob);
     printf("Enter frame corruption probability [0.0 for no corruption]:");
     scanf("%f",&corruptprob);
-    printf("Enter average time between packets from sender's layer3 [ > 0.0]:");
+    printf("Enter average time_ between packets from sender's layer3 [ > 0.0]:");
     scanf("%f",&lambda);
     printf("Enter TRACE:");
     scanf("%d",&TRACE);
@@ -746,7 +755,7 @@ void init() /* initialize the simulator */
     nlost = 0;
     ncorrupt = 0;
 
-    time = 0.0;              /* initialize time to 0.0 */
+    time_ = 0.0;              /* initialize time_ to 0.0 */
     generate_next_arrival(); /* initialize event list */
 }
 
@@ -780,7 +789,7 @@ void generate_next_arrival(void)
     x = lambda * jimsrand() * 2; /* x is uniform on [0,2*lambda] */
     /* having mean of lambda        */
     evptr = (struct event *)malloc(sizeof(struct event));
-    evptr->evtime = time + x;
+    evptr->evtime = time_ + x;
     evptr->evtype = FROM_layer3;
     if (BIDIRECTIONAL && (jimsrand() > 0.5))
         evptr->eventity = B;
@@ -795,8 +804,8 @@ void insertevent(struct event *p)
 
     if (TRACE > 2)
     {
-        printf("            INSERTEVENT: time is %lf\n", time);
-        printf("            INSERTEVENT: future time will be %lf\n", p->evtime);
+        printf("            INSERTEVENT: time_ is %lf\n", time_);
+        printf("            INSERTEVENT: future time_ will be %lf\n", p->evtime);
     }
     q = evlist;      /* q points to header of list in which p struct inserted */
     if (q == NULL)   /* list is empty */
@@ -839,7 +848,7 @@ void printevlist(void)
     printf("--------------\nEvent List Follows:\n");
     for (q = evlist; q != NULL; q = q->next)
     {
-        printf("Event time: %f, type: %d entity: %d\n", q->evtime, q->evtype,
+        printf("Event time_: %f, type: %d entity: %d\n", q->evtime, q->evtype,
                q->eventity);
     }
     printf("--------------\n");
@@ -847,13 +856,13 @@ void printevlist(void)
 
 /********************** Student-callable ROUTINES ***********************/
 
-/* called by students routine to cancel a previously-started timer */
-void stoptimer(int AorB /* A or B is trying to stop timer */)
+/* called by students routine to cancel a previously-started time_r */
+void stoptimer(int AorB /* A or B is trying to stop time_r */)
 {
     struct event *q, *qold;
 
     if (TRACE > 2)
-        printf("          STOP TIMER: stopping timer at %f\n", time);
+        printf("          STOP TIMER: stopping time_r at %f\n", time_);
     /* for (q=evlist; q!=NULL && q->next!=NULL; q = q->next)  */
     for (q = evlist; q != NULL; q = q->next)
         if ((q->evtype == TIMER_INTERRUPT && q->eventity == AorB))
@@ -876,28 +885,28 @@ void stoptimer(int AorB /* A or B is trying to stop timer */)
             free(q);
             return;
         }
-    printf("Warning: unable to cancel your timer. It wasn't running.\n");
+    printf("Warning: unable to cancel your time_r. It wasn't running.\n");
 }
 
-void starttimer(int AorB /* A or B is trying to start timer */, float increment)
+void starttimer(int AorB /* A or B is trying to start time_r */, float increment)
 {
     struct event *q;
     struct event *evptr;
 
     if (TRACE > 2)
-        printf("          START TIMER: starting timer at %f\n", time);
-    /* be nice: check to see if timer is already started, if so, then  warn */
+        printf("          START TIMER: starting time_r at %f\n", time_);
+    /* be nice: check to see if time_r is already started, if so, then  warn */
     /* for (q=evlist; q!=NULL && q->next!=NULL; q = q->next)  */
     for (q = evlist; q != NULL; q = q->next)
         if ((q->evtype == TIMER_INTERRUPT && q->eventity == AorB))
         {
-            printf("Warning: attempt to start a timer that is already started\n");
+            printf("Warning: attempt to start a time_r that is already started\n");
             return;
         }
 
-    /* create future event for when timer goes off */
+    /* create future event for when time_r goes off */
     evptr = (struct event *)malloc(sizeof(struct event));
-    evptr->evtime = time + increment;
+    evptr->evtime = time_ + increment;
     evptr->evtype = TIMER_INTERRUPT;
     evptr->eventity = AorB;
     insertevent(evptr);
@@ -945,11 +954,11 @@ void tolayer1(int AorB, struct frm frame)
     evptr->evtype = FROM_layer1;      /* frame will pop out from layer1 */
     evptr->eventity = (AorB + 1) % 2; /* event occurs at other entity */
     evptr->frmptr = myfrmptr;         /* save ptr to my copy of frame */
-    /* finally, compute the arrival time of frame at the other end.
+    /* finally, compute the arrival time_ of frame at the other end.
        medium can not reorder, so make sure frame arrives between 1 and 10
-       time units after the latest arrival time of frames
+       time_ units after the latest arrival time_ of frames
        currently in the medium on their way to the destination */
-    lastime = time;
+    lastime = time_;
     /* for (q=evlist; q!=NULL && q->next!=NULL; q = q->next) */
     for (q = evlist; q != NULL; q = q->next)
         if ((q->evtype == FROM_layer1 && q->eventity == evptr->eventity))

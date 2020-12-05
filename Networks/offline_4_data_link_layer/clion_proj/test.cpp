@@ -18,6 +18,7 @@ string divisor = "10101";
 
 string divide(string divident, string divisor){
     assert(divident.size() == divisor.size());
+    // cout << "divide: " << divident << " " << divisor << endl;
     string result;
     for(int i=0;i<divident.size();i++){
         if(divident[i] != divisor[i]){
@@ -28,11 +29,12 @@ string divide(string divident, string divisor){
 }
 
 pair<string, string> CRC(string divident, string divisor){
-    int window_size = divisor.size();
-    
+    int window_size = (int)divisor.size();
+    string div_zero;
+    for(int i=0;i<window_size;i++) div_zero.push_back('0');
     // append window_size - 1 zeroes
     for(int i=0;i<window_size-1;i++) divident.push_back('0');
-    int divident_size = divident.size();
+    int divident_size = (int)divident.size();
     // find the first 1
     int idx = -1;
     for(int i=0;i<divident_size;i++) {
@@ -45,7 +47,10 @@ pair<string, string> CRC(string divident, string divisor){
     string divi_str = divident.substr(idx, window_size);
     for(int i=idx;i<=divident_size - window_size;i++){
         // divi_str = divisor.substr(i, window_size);
-        string res = divide(divi_str, divisor);
+        string div_by = divisor;
+        if(divi_str[0] == '0') div_by = div_zero; 
+        // cout << i << " " << div_by << endl;
+        string res = divide(divi_str, div_by);
         res.erase(res.begin());
         if(i + window_size < divident_size)
             divi_str = res + divident[i + window_size];
@@ -54,9 +59,14 @@ pair<string, string> CRC(string divident, string divisor){
         }
     }
     string rem = divi_str;
+    // cout << "divi " << divident << endl;
+    // cout <<"rem " << rem << endl;
+    int j = divident.size() - 1;
     for(int i=(int)rem.size() - 1;i>=0;i--){
-        divident[i] = rem[i];
+        divident[j] = rem[i];
+        j--;
     }
+    // cout << "div_appn : " << divident << endl; 
     return {divident, rem};
 }
 
@@ -90,11 +100,15 @@ string calculate_checksum_2(struct frm frame){
     // cout << "------------------\n";
     // cout << frame.acknum << " " << frame.seqnum << " " << frame.type << " " << frame.payload << endl;
     // cout << ack_bin << " " << seq_bin << " " << type_bin << " " << payload_bin << endl;
+    // cout << "divident: " << ack_bin + " " + seq_bin + " " + type_bin + " " + payload_bin << endl;
     return CRC(ack_bin + seq_bin + type_bin + payload_bin, divisor).first;
+    // cout << "divident : " << payload_bin << endl;
+    // return CRC(payload_bin, divisor).first;
 }
 
 bool check_checksum(string checksum){
     string rem = CRC(checksum, divisor).second;
+    // cout << "rem : " << rem << endl;
     for(auto ele : rem){
         if(ele != '0') return false;
     }
@@ -103,8 +117,11 @@ bool check_checksum(string checksum){
 
 int main(){
     // cout << get_bin(31, 32) << endl;
-    char ch[] = "aaa"; 
+    char chr = (char)36;
+    char ch[] = "a"; 
+    ch[0] = chr;
     frm frame;
+    frame.type = 0;
     frame.seqnum = 2;
     frame.acknum = 0;
     strcpy(frame.payload, ch);
