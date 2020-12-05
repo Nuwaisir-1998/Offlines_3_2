@@ -12,7 +12,6 @@ using namespace std;
 /* ******************************************************************
  ALTERNATING BIT AND GO-BACK-N NETWORK EMULATOR: SLIGHTLY MODIFIED
  FROM VERSION 1.1 of J.F.Kurose
-
    This code should be used for PA2, unidirectional or bidirectional
    data transfer protocols (from A to B. Bidirectional transfer of data
    is for extra credit and is not required).  Network properties:
@@ -43,7 +42,7 @@ struct frm
     int type;
     int seqnum;
     int acknum;
-    string checksum;
+    int checksum;
     char payload[4];
 };
 
@@ -73,17 +72,16 @@ struct frm global_frame_A;
 struct frm global_frame_B;
 
 void print_frm(frm frame){
-    printf("type: %d, seq: %d, ack: %d\ncheckSum: %s\npkt: %s\n", frame.type, frame.seqnum, frame.acknum, frame.checksum.c_str(), frame.payload);
+    printf("type: %d, seq: %d, ack: %d\ncheckSum: %d\npkt: %s\n", frame.type, frame.seqnum, frame.acknum, frame.checksum, frame.payload);
     printf("outstanding ackA : %d\n", outstanding_ack_A);
     printf("outstanding ackB : %d\n", outstanding_ack_B);
 }
 
-string get_bin(int n, int sz){ // seems ok
+string get_bin(int n, int sz){
     string bin;
     bin.resize(sz, '0');
     int idx = 0;
     while(n){
-        assert(idx < sz);
         if(n % 2){
             // bin.push_back('1');
             bin[idx++] = '1';
@@ -98,7 +96,7 @@ string get_bin(int n, int sz){ // seems ok
 }
 
 string divide(string divident, string divisor){
-    assert((int)divident.size() == (int)divisor.size());
+    assert(divident.size() == divisor.size());
     string result;
     for(int i=0;i<divident.size();i++){
         if(divident[i] != divisor[i]){
@@ -109,11 +107,11 @@ string divide(string divident, string divisor){
 }
 
 pair<string, string> CRC(string divident, string divisor){
-    int window_size = (int)divisor.size();
+    int window_size = divisor.size();
     
     // append window_size - 1 zeroes
     for(int i=0;i<window_size-1;i++) divident.push_back('0');
-    int divident_size = (int)divident.size();
+    int divident_size = divident.size();
     // find the first 1
     int idx = -1;
     for(int i=0;i<divident_size;i++) {
@@ -135,7 +133,7 @@ pair<string, string> CRC(string divident, string divisor){
         }
     }
     string rem = divi_str;
-    for(int i=(int)rem.size() - 1;i>=0;i--){
+    for(int i=rem.size() - 1;i>=0;i--){
         divident[i] = rem[i];
     }
     return {divident, rem};
@@ -196,7 +194,7 @@ void A_output(struct pkt packet)
         frm_A.seqnum = seq_num_A;
         
         strcpy(frm_A.payload, packet.data);
-        frm_A.checksum = calculate_checksum_2(frm_A);
+        frm_A.checksum = calculate_checksum(frm_A);
         global_frame_A = frm_A;
         printf("A sending: ");
         print_frm(global_frame_A);
@@ -226,7 +224,7 @@ void B_output(struct pkt packet)
         frm_B.seqnum = seq_num_B;
         
         strcpy(frm_B.payload, packet.data);
-        frm_B.checksum = calculate_checksum_2(frm_B);
+        frm_B.checksum = calculate_checksum(frm_B);
         global_frame_B = frm_B;
         printf("B sending: ");
         print_frm(global_frame_B);
@@ -246,10 +244,8 @@ void A_input(struct frm frame)
     printf("A received: ");
     print_frm(frame);
 
-    // int check = calculate_checksum(frame);
-    // bool check = false;
-    bool check = check_checksum(frame.checksum);
-    if(!check){
+    int check = calculate_checksum(frame);
+    if(check != frame.checksum){
         printf("distorted data recieved at A\n");
 
         // send nack here
@@ -257,8 +253,8 @@ void A_input(struct frm frame)
         frm_a_nack.type = 1;
         frm_a_nack.seqnum = -1;
         frm_a_nack.acknum = ack_A; // -_-
-        strcpy(frm_a_nack.payload, "nnn");
-        frm_a_nack.checksum = calculate_checksum_2(frm_a_nack);
+        strcpy(frm_a_nack.payload, "n");
+        frm_a_nack.checksum = calculate_checksum(frm_a_nack);
         printf("A received\n");
         printf("data distorted : \n");
         print_frm(frame);
@@ -276,8 +272,8 @@ void A_input(struct frm frame)
             frm_A.type = 1;
             frm_A.seqnum = -1;
             frm_A.acknum = ack_A;
-            strcpy(frm_A.payload, "ign");
-            frm_A.checksum = calculate_checksum_2(frm_A);
+            strcpy(frm_A.payload, "ig");
+            frm_A.checksum = calculate_checksum(frm_A);
             printf("A sending: ");
             print_frm(frm_A);
             tolayer1(0, frm_A);
@@ -323,8 +319,8 @@ void A_input(struct frm frame)
                 frm_A.type = 1;
                 frm_A.seqnum = -1;
                 frm_A.acknum = ack_A;
-                strcpy(frm_A.payload, "ign");
-                frm_A.checksum = calculate_checksum_2(frm_A);
+                strcpy(frm_A.payload, "ig");
+                frm_A.checksum = calculate_checksum(frm_A);
                 printf("A sending: ");
                 print_frm(frm_A);
                 tolayer1(0, frm_A);
@@ -439,8 +435,8 @@ void B_input(struct frm frame)
     printf("B received: ");
     print_frm(frame);
 
-    bool check = check_checksum(frame.checksum);
-    if(!check){
+    int check = calculate_checksum(frame);
+    if(check != frame.checksum){
         printf("distorted data recieved at B\n");
 
         // send nack here
@@ -448,8 +444,8 @@ void B_input(struct frm frame)
         frm_b_nack.type = 1;
         frm_b_nack.seqnum = -1;
         frm_b_nack.acknum = ack_B; // -_-
-        strcpy(frm_b_nack.payload, "nnn");
-        frm_b_nack.checksum = calculate_checksum_2(frm_b_nack);
+        strcpy(frm_b_nack.payload, "n");
+        frm_b_nack.checksum = calculate_checksum(frm_b_nack);
         printf("B received\n");
         printf("data distorted : \n");
         print_frm(frame);
@@ -467,8 +463,8 @@ void B_input(struct frm frame)
             frm_B.type = 1;
             frm_B.seqnum = -1;
             frm_B.acknum = ack_B;
-            strcpy(frm_B.payload, "ign");
-            frm_B.checksum = calculate_checksum_2(frm_B);
+            strcpy(frm_B.payload, "ig");
+            frm_B.checksum = calculate_checksum(frm_B);
             printf("B sending: ");
             print_frm(frm_B);
             tolayer1(1, frm_B);
@@ -514,8 +510,8 @@ void B_input(struct frm frame)
                 frm_B.type = 1;
                 frm_B.seqnum = -1;
                 frm_B.acknum = ack_B;
-                strcpy(frm_B.payload, "ign");
-                frm_B.checksum = calculate_checksum_2(frm_B);
+                strcpy(frm_B.payload, "ig");
+                frm_B.checksum = calculate_checksum(frm_B);
                 printf("B sending: ");
                 print_frm(frm_B);
                 tolayer1(1, frm_B);
@@ -569,7 +565,6 @@ The code below emulates the layer 3 and below network environment:
     - handles the starting/stopping of a timer, and generates timer
         interrupts (resulting in calling students timer handler).
     - generates packet to be sent (passed from later 5 to 20)
-
 THERE IS NOT REASON THAT ANY STUDENT SHOULD HAVE TO READ OR UNDERSTAND
 THE CODE BELOW.  YOU SHOLD NOT TOUCH, OR REFERENCE (in your code) ANY
 OF THE DATA STRUCTURES BELOW.  If you're interested in how I designed
@@ -616,7 +611,7 @@ void insertevent(struct event *p);
 int main()
 {
     #ifndef ONLINE_JUDGE
-//        freopen("in", "r", stdin);
+        // freopen("in", "r", stdin);
         // freopen("out", "w", stdout);
     #endif // ONLINE_JUDGE
     struct event *eventptr;
@@ -933,8 +928,8 @@ void tolayer1(int AorB, struct frm frame)
         myfrmptr->payload[i] = frame.payload[i];
     if (TRACE > 2)
     {
-        printf("          TOlayer1: seq: %d, ack %d, check: %s ", myfrmptr->seqnum,
-               myfrmptr->acknum, myfrmptr->checksum.c_str());
+        printf("          TOlayer1: seq: %d, ack %d, check: %d ", myfrmptr->seqnum,
+               myfrmptr->acknum, myfrmptr->checksum);
         for (i = 0; i < 4; i++)
             printf("%c", myfrmptr->payload[i]);
         printf("\n");
@@ -986,3 +981,4 @@ void tolayer3(int AorB, char datasent[4])
         printf("\n");
     }
 }
+
