@@ -1,0 +1,340 @@
+-----  Stop and Wait Network Simulator Version 1.1 -------- 
+
+CRC steps = PiggyBacking = Enter the number of packets to simulate: Enter  frame loss probability [enter 0.0 for no loss]:Enter frame corruption probability [0.0 for no corruption]:Enter average time_ between packets from sender's layer3 [ > 0.0]:Enter TRACE:A_init called
+B_init called
+
+EVENT time_: 46.784874,  type: 1, fromlayer3  entity: 1
+ ------------- B_output called -------------
+B sending: type: 0, seq: 0, ack: -1
+checkSum: 011110
+pkt: aaa
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 50.875423,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 0, ack: -1
+checkSum: 011110
+pkt: aaa
+outstanding ackA : 0
+outstanding ackB : 0
+A received (in else): type: 0, seq: 0, ack: -1
+checkSum: 011110
+pkt: aaa
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer3 called ------------
+
+EVENT time_: 61.784874,  type: 0, time_rinterrupt   entity: 1
+(B_timerinterrupt) B sending: type: 0, seq: 0, ack: -1
+checkSum: 011110
+pkt: aaa
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 65.999298,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 0, ack: -1
+checkSum: 011110
+pkt: aaa
+outstanding ackA : 1
+outstanding ackB : 0
+Duplicate data found at A
+A sending: type: 1, seq: -1, ack: 0
+checkSum: 111110
+pkt: ign
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 71.392044,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 1, seq: -1, ack: 0
+checkSum: 111110
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+
+EVENT time_: 668.660522,  type: 1, fromlayer3  entity: 0
+ ------------- A_output called --------------
+A sending: type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 676.900208,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 0
+B received: (in else)type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 1
+------------ tolayer3 called ------------
+
+EVENT time_: 683.660522,  type: 0, time_rinterrupt   entity: 0
+(A_timerinterrupt) A sending: type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 1
+------------ tolayer1 called ------------
+
+EVENT time_: 690.396118,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 1
+Duplicate data found at B
+B sending: type: 1, seq: -1, ack: 0
+checkSum: 111110
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 1
+------------ tolayer1 called ------------
+
+EVENT time_: 698.660522,  type: 0, time_rinterrupt   entity: 0
+(A_timerinterrupt) A sending: type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 699.158997,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 1, seq: -1, ack: 0
+checkSum: 111110
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+
+EVENT time_: 702.146790,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 0, seq: 0, ack: -1
+checkSum: 011000
+pkt: bbb
+outstanding ackA : 0
+outstanding ackB : 0
+Duplicate data found at B
+B sending: type: 1, seq: -1, ack: 0
+checkSum: 111110
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 706.023071,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 1, seq: -1, ack: 0
+checkSum: 111110
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+NACK received at A
+
+EVENT time_: 1161.625977,  type: 1, fromlayer3  entity: 1
+ ------------- B_output called -------------
+B sending: type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1162.683350,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 0
+outstanding ackB : 0
+A received (in else): type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer3 called ------------
+
+EVENT time_: 1176.625977,  type: 0, time_rinterrupt   entity: 1
+(B_timerinterrupt) B sending: type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1185.961060,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 1
+outstanding ackB : 0
+Duplicate data found at A
+A sending: type: 1, seq: -1, ack: 1
+checkSum: 111100
+pkt: ign
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1191.625977,  type: 0, time_rinterrupt   entity: 1
+(B_timerinterrupt) B sending: type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1192.707886,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 1, seq: -1, ack: 1
+checkSum: 111100
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+
+EVENT time_: 1196.204834,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 1, ack: -1
+checkSum: 111110
+pkt: ccc
+outstanding ackA : 0
+outstanding ackB : 0
+Duplicate data found at A
+A sending: type: 1, seq: -1, ack: 1
+checkSum: 111100
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1203.947388,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 1, seq: -1, ack: 1
+checkSum: 111100
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+NACK received at B
+
+EVENT time_: 1647.236450,  type: 1, fromlayer3  entity: 1
+ ------------- B_output called -------------
+B sending: type: 0, seq: 2, ack: -1
+checkSum: 010110
+pkt: ddd
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1649.156250,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 2, ack: -1
+checkSum: 010110
+pkt: ddd
+outstanding ackA : 0
+outstanding ackB : 0
+A received (in else): type: 0, seq: 2, ack: -1
+checkSum: 010110
+pkt: ddd
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer3 called ------------
+
+EVENT time_: 1662.236450,  type: 0, time_rinterrupt   entity: 1
+(B_timerinterrupt) B sending: type: 0, seq: 2, ack: -1
+checkSum: 010110
+pkt: ddd
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1671.871460,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 2, ack: -1
+checkSum: 010110
+pkt: ddd
+outstanding ackA : 1
+outstanding ackB : 0
+Duplicate data found at A
+A sending: type: 1, seq: -1, ack: 2
+checkSum: 111010
+pkt: ign
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1676.878540,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 1, seq: -1, ack: 2
+checkSum: 111010
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+
+EVENT time_: 1705.832031,  type: 1, fromlayer3  entity: 1
+ ------------- B_output called -------------
+B sending: type: 0, seq: 3, ack: -1
+checkSum: 110000
+pkt: eee
+outstanding ackA : 0
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1711.417847,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 3, ack: -1
+checkSum: 110000
+pkt: eee
+outstanding ackA : 0
+outstanding ackB : 0
+A received (in else): type: 0, seq: 3, ack: -1
+checkSum: 110000
+pkt: eee
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer3 called ------------
+
+EVENT time_: 1720.832031,  type: 0, time_rinterrupt   entity: 1
+(B_timerinterrupt) B sending: type: 0, seq: 3, ack: -1
+checkSum: 110000
+pkt: eee
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1723.167725,  type: 2, fromlayer1  entity: 0
+ --------------- A_input called --------------
+A received: type: 0, seq: 3, ack: -1
+checkSum: 110000
+pkt: eee
+outstanding ackA : 1
+outstanding ackB : 0
+Duplicate data found at A
+A sending: type: 1, seq: -1, ack: 3
+checkSum: 111000
+pkt: ign
+outstanding ackA : 1
+outstanding ackB : 0
+------------ tolayer1 called ------------
+
+EVENT time_: 1724.972534,  type: 2, fromlayer1  entity: 1
+ -------------- B_input called ------------- 
+B received: type: 1, seq: -1, ack: 3
+checkSum: 111000
+pkt: ign
+outstanding ackA : 0
+outstanding ackB : 0
+ Simulator terminated at time_ 1724.972534
+ after sending 5 pkts from layer3

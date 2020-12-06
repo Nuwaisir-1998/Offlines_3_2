@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+E:/Offlines_3_2/AI/Offline_4/untitled/main.cpp
+iostream
+-
+string
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+vector
+-
+algorithm
+-
+assert.h
+-
+
