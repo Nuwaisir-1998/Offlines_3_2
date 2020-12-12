@@ -68,7 +68,7 @@ gp_hash_table<ll, ll, custom_hash> safe_hash_table;
 
 std::ofstream ofs ("check_moves", std::ofstream::out);
 
-int TIME_LIMIT = 2;
+int TIME_LIMIT = 30;
 int BOTS_COLOR = 0;
 bool time_over = false;
 int lim = 10;
@@ -813,7 +813,7 @@ void solve(ll cs){
     }
     // b.make_move(p1, p2);
     pair<Position, Position> from_to;
-    for(int i=1;i<7;i++){
+    for(int i=1;i<=5;i++){
         b.backtrack(b, i, bots_color, true, -INF, INF);
         // cout << 
         // cout << "time: " << start_t * 1.0 / CLOCKS_PER_SEC << endl;

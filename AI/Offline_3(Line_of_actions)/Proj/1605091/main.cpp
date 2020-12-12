@@ -23,7 +23,7 @@ typedef vector<pll> vpll;
 #define MOD9 998244353
 #define PI acos(-1)
 #define MAXN 200005
-#define INF 1000000000
+#define INF 100000000
 #define nl '\n'
 #define MAX(x) *max_element(all(x))
 #define MIN(x) *min_element(all(x))
@@ -73,6 +73,8 @@ int BOTS_COLOR = 0;
 bool time_over = false;
 int lim = 10;
 
+int COUNTER = 0;
+
 clock_t start_t;
 
 struct Position {
@@ -107,10 +109,10 @@ struct Game {
     {
         {-80, -25, -20, -20, -20, -20, -25, -80},
         {-25,  10,  10,  10,  10,  10,  10,  -25},
-        {-20,  10,  25,  25,  25,  25,  10,  -20},
-        {-20,  10,  25,  50,  50,  25,  10,  -20},
-        {-20,  10,  25,  50,  50,  25,  10,  -20},
-        {-20,  10,  25,  25,  25,  25,  10,  -20},
+        {-20,  10,  20,  20,  20,  20,  10,  -20},
+        {-20,  10,  20,  40,  40,  20,  10,  -20},
+        {-20,  10,  20,  40,  40,  20,  10,  -20},
+        {-20,  10,  20,  20,  20,  20,  10,  -20},
         {-25,  10,  10,  10,  10,  10,  10,  -25},
         {-80, -25, -20, -20, -20, -20, -25, -80}
     };
@@ -125,6 +127,16 @@ struct Game {
         col_total.assign(dimension, 0);
         diag_rl_total.assign(dimension * 2 - 1, 0);
         diag_lr_total.assign(dimension * 2 - 1, 0);
+        if(dimension == 6){
+            piece_square_table = {
+                {25, -20, -20, -20, -20, -25},
+                {-25,  10,  10,  10,  10, -25},
+                {-20,  20,  40,  40,  20, -20},
+                {-20,  20,  40,  40,  20, -20},
+                {-25,  10,  10,  10,  10, -25},
+                {25, -20, -20, -20, -20, -25}
+            };
+        }
         make_pos_vectors();
     }
 
@@ -446,7 +458,7 @@ struct Game {
         return max(abs(p1.x - p2.x), abs(p1.y - p2.y));
     }
     
-    int heuristic_piece_square_table(int color){
+    int calc_piece_square_table(int color){
         int n = pos_color[color].size();
         int sum = 0;
         for(int i=0;i<n;i++){
@@ -458,7 +470,11 @@ struct Game {
         return sum;
     }
 
-    int heuristic_area(int color){
+    int heuristic_piece_square_table(int color){
+        return calc_piece_square_table(color) - calc_piece_square_table(abs(1 - color));
+    }
+
+    int calc_area(int color){
         int n = pos_color[color].size();
         int mn_x = INF;
         int mn_y = INF;
@@ -472,7 +488,11 @@ struct Game {
             mx_x = max(mx_x, x);
             mx_y = max(mx_y, y);
         }
-        return (mx_x - mn_x + 1) * (mx_y - mn_y + 1);
+        return 64 - (mx_x - mn_x + 1) * (mx_y - mn_y + 1);
+    }
+
+    int heuristic_area(int color){
+        return calc_area(color) - calc_area(abs(1 - color));
     }
 
     int connectedness_of(int color){
@@ -527,20 +547,37 @@ struct Game {
         return count_quad(color) - count_quad(abs(1 - color));
     }
 
+
     int utility(int color){
         int c1 = 2;
         int c2 = 10;
         int c3 = 15;
-        int c4 = 150;
+        int c4 = 115;
         int h1 = heuristic_piece_square_table(color);
         int h2 = heuristic_area(color);
         int h3 = heuristic_connectedness(color);
         int h4 = heuristic_qaud_count(color);
+        int h5 = 0;
+        if(color == W) {
+            if(is_white_winner()){
+                // ofs << "is_white\n";
+                h5 = INF;
+            }else if(is_black_winner()){
+                h5 = -INF;
+            }
+        }else {
+            if(is_black_winner()){
+                // ofs << "is_black\n";
+                h5 = INF;
+            }else if(is_white_winner()){
+                h5 = -INF;
+            }
+        }
         if(lim){
             lim--;
-            ofs << c1*h1 << " " << c2*h2 << " " << c3*h3 << " " << c4*h4 << endl;
+            ofs << c1*h1 << " " << c2*h2 << " " << c3*h3 << " " << c4*h4 << " " << h5 << endl;
         }
-        return c1 * h1 + c2 * h2 + c3 * h3 + c4 * h4;
+        return c1 * h1 + c2 * h2 + c3 * h3 + c4 * h4 + h5;
     }
 
 
@@ -573,12 +610,12 @@ struct Game {
 
     // sets the next_move
     int backtrack(Game & game, int depth, int color, bool isMax, int alpha, int beta){
-        if(time_over) return -INF;
+        if(time_over) return 0;
         if(depth == 0){
             // cout << "time_stamp" << (double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC << endl;
             if((double)(clock() - start_t) * 1.0 / CLOCKS_PER_SEC > TIME_LIMIT){
                 time_over = true;
-                return -INF;
+                return 0;
             }
             return game.utility(BOTS_COLOR);
         }
@@ -596,6 +633,7 @@ struct Game {
                 new_board[start_pos.x][start_pos.y] = BLANK;
                 new_board[end_pos.x][end_pos.y] = color;
                 Game new_game(new_board);
+
 
                 // new_game.print_board();
                 // cout << "heu : " << new_game.heuristic_piece_square_table(color) << endl;
@@ -748,6 +786,12 @@ void solve(ll cs){
 
 
 
+    // Position p(4, 7);
+    // vector<Position> v = b.generate_all_moves(p, B);
+    // // for(auto ele : v){
+    // //     ele.print();
+    // // }
+    // cout << "---" << endl;
     // Position com = b.center_of_mass(b.pos_color[W]);
     // com.print();
 
@@ -769,7 +813,7 @@ void solve(ll cs){
     }
     // b.make_move(p1, p2);
     pair<Position, Position> from_to;
-    for(int i=1;i<17;i++){
+    for(int i=1;i<7;i++){
         b.backtrack(b, i, bots_color, true, -INF, INF);
         // cout << 
         // cout << "time: " << start_t * 1.0 / CLOCKS_PER_SEC << endl;

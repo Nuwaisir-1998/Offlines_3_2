@@ -26,21 +26,31 @@ int main (int argc, char * argv[]) {
         vector<vector<int>> board;
         string s;
         for(int i=0;i<arena_size;i++){
-            cin >> s;
             vector<int> v;
-            for(auto ele : s){
-                if(s[i] == 'e'){
+            for(int j=0;j<arena_size;j++){
+                char ch;
+                cin >> ch;
+                if(ch == 'e'){
                     v.push_back(2);
-                }else if(s[i] == 'r') v.push_back(1);
+                }else if(ch == 'r') v.push_back(1);
                 else v.push_back(0);
             }
             board.push_back(v);
         }
         Game game(board);
         // bot.get_map();
-        game.backtrack(game, search_depth, bot_color, true, -1000000000, 1000000000);
-        pair<Position, Position> pp = game.get_best_move();
-        cout << pp.first.x << " " << pp.first.y << " " << pp.second.x << " " << pp.second.y << endl;
+        Position from, to;
+        from = game.pos_color[bot_color][0];
+        to = game.generate_all_moves(from, bot_color)[0];
+        for(int i=1;i<=search_depth;i++){
+            game.backtrack(game, search_depth, bot_color, true, -1000000000, 1000000000);
+            if(game.get_best_move().first.x != -1){
+                from = game.get_best_move().first;
+                to = game.get_best_move().second;
+            }
+        }
+        // pair<Position, Position> pp = game.get_best_move();
+        cout << from.x << " " << from.y << " " << to.x << " " << to.y << endl;
     }
     return 0;
 }
